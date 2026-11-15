@@ -74,7 +74,7 @@ export function StoryAssistantPage({
 
   const activeTheme = GENRE_THEMES[genreId];
   const activeTool = useMemo(
-    () => ASSISTANCE_TOOLS.find((t) => t.id === toolId) || ASSISTANCE_TOOLS[0],
+    () => (ASSISTANCE_TOOLS.find((t) => t.id === toolId) || ASSISTANCE_TOOLS[0])!,
     [toolId]
   );
 

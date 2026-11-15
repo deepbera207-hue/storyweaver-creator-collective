@@ -542,7 +542,7 @@ export const studioService = {
     }
   ): Promise<CreativeProject> {
     const genres: Genre[] = payload.genres.length ? payload.genres.slice(0, 10) : ['Other'];
-    const primary = genres.includes(payload.primaryGenre) ? payload.primaryGenre : genres[0];
+    const primary: Genre = genres.includes(payload.primaryGenre) ? payload.primaryGenre : (genres[0] ?? 'Other');
     const { data, error } = await supabase
       .from('projects')
       .insert({
@@ -578,7 +578,9 @@ export const studioService = {
         file_size: new Blob([payload.scriptText]).size,
       });
     }
-    return (await buildProjects([data as ProjectRow]))[0];
+    const built = (await buildProjects([data as ProjectRow]))[0];
+    if (!built) throw new Error('Project could not be loaded.');
+    return built;
   },
 
   async updateProject(
@@ -737,9 +739,9 @@ export const studioService = {
     if (error) fail(error, `Invite code "${clean}" was not found.`);
     const d = data as Record<string, string>;
     return {
-      id: d['code'],
-      code: d['code'],
-      projectId: d['project_id'],
+      id: d['code'] ?? clean,
+      code: d['code'] ?? clean,
+      projectId: d['project_id'] ?? '',
       projectTitle: d['project_title'],
       projectPrimaryGenre: d['project_primary_genre'] as Genre,
       projectStatus: d['project_status'] as ProjectStatus,
@@ -748,8 +750,8 @@ export const studioService = {
       roleOffered: (d['role_offered'] as CreativeRole) || undefined,
       targetUserId: d['target_user_id'] || undefined,
       targetName: d['target_name'] || undefined,
-      createdBy: d['created_by'],
-      createdAt: d['created_at'],
+      createdBy: d['created_by'] ?? '',
+      createdAt: d['created_at'] ?? new Date().toISOString(),
       status: d['status'] === 'accepted' ? 'accepted' : 'pending',
     };
   },
@@ -774,8 +776,8 @@ export const studioService = {
       .select('id, status')
       .or(`and(from_id.eq.${fromUser.id},to_id.eq.${toCreator.id}),and(from_id.eq.${toCreator.id},to_id.eq.${fromUser.id})`)
       .limit(1);
-    if (existing && existing.length > 0) {
-      const ex = existing[0];
+    const ex = existing?.[0];
+    if (ex) {
       if (ex.status === 'declined') {
         await supabase.from('connections').delete().eq('id', ex.id);
       } else {

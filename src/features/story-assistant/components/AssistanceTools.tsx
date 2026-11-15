@@ -72,7 +72,7 @@ export function AssistanceTools({
   canGenerate,
 }: AssistanceToolsProps) {
   const activeTool =
-    ASSISTANCE_TOOLS.find((t) => t.id === selectedTool) || ASSISTANCE_TOOLS[0];
+    (ASSISTANCE_TOOLS.find((t) => t.id === selectedTool) || ASSISTANCE_TOOLS[0])!;
 
   return (
     <aside
