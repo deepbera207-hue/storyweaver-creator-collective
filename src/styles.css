@@ -284,3 +284,23 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Soft animated loading orb used for page/section loading states */
+@utility loader-orb {
+  display: inline-block;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 30% 30%, var(--romance-soft2), transparent 60%),
+    radial-gradient(circle at 70% 40%, var(--peaceful-soft2), transparent 60%),
+    radial-gradient(circle at 50% 80%, var(--adventure-soft2), transparent 60%),
+    var(--card);
+  box-shadow: var(--shadow-soft);
+  animation: orb-breathe 1.6s ease-in-out infinite;
+}
+
+@keyframes orb-breathe {
+  0%, 100% { transform: scale(0.9); opacity: 0.75; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
