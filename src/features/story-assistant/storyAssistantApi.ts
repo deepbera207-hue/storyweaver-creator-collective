@@ -21,8 +21,8 @@ function createId(prefix = 'id'): string {
 
 export async function generateStoryAssistance(request: StoryAssistantRequest): Promise<AssistantResponse> {
   const data = (await runStoryAssistant({ data: request })) as {
-    summary?: string;
-    suggestions?: Partial<StorySuggestion>[];
+    summary?: string | undefined;
+    suggestions?: Partial<StorySuggestion>[] | undefined;
   };
   const suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
   if (suggestions.length === 0) {
@@ -50,7 +50,7 @@ export async function generateStoryAssistance(request: StoryAssistantRequest): P
 export async function reviseSuggestionWithChat(
   request: ReviseSuggestionRequest
 ): Promise<{ mode: 'live' | 'demo'; suggestion: StorySuggestion }> {
-  const data = (await runStoryAssistant({ data: request })) as { suggestion?: Partial<StorySuggestion> };
+  const data = (await runStoryAssistant({ data: request })) as { suggestion?: Partial<StorySuggestion> | undefined };
   const s = data.suggestion ?? {};
   return {
     mode: 'live',
@@ -68,7 +68,7 @@ export async function reviseSuggestionWithChat(
 }
 
 export async function mergeStoryWithSuggestions(request: MergeStoryRequest): Promise<RecreatedStoryResult> {
-  const data = (await runStoryAssistant({ data: request })) as { content?: string };
+  const data = (await runStoryAssistant({ data: request })) as { content?: string | undefined };
   if (!data.content?.trim()) throw new Error('The assistant returned an empty draft. Please try again.');
   return {
     id: createId('merged'),

@@ -70,13 +70,13 @@ type AssistantInput =
       storyText: string;
       genreId: string;
       toolId: string;
-      characterFocus?: string;
-      dialogueTone?: string;
-      extraInstruction?: string;
+      characterFocus?: string | undefined;
+      dialogueTone?: string | undefined;
+      extraInstruction?: string | undefined;
       generationRound: number;
       seenTitles: string[];
       rejectedTitles: string[];
-      projectContext?: string;
+      projectContext?: string | undefined;
     }
   | {
       action: "revise_suggestion";
@@ -84,9 +84,9 @@ type AssistantInput =
       storyText: string;
       genreId: string;
       toolId: string;
-      suggestion: { category?: string; title?: string; guidance?: string; draftSnippet?: string };
+      suggestion: { category?: string | undefined; title?: string | undefined; guidance?: string | undefined; draftSnippet?: string | undefined };
       editInstruction: string;
-      projectContext?: string;
+      projectContext?: string | undefined;
     }
   | {
       action: "merge_story";
@@ -94,8 +94,8 @@ type AssistantInput =
       storyText: string;
       genreId: string;
       format: "prose" | "script";
-      acceptedSuggestions: { title?: string; guidance?: string; draftSnippet?: string }[];
-      projectContext?: string;
+      acceptedSuggestions: { title?: string | undefined; guidance?: string | undefined; draftSnippet?: string | undefined }[];
+      projectContext?: string | undefined;
     };
 
 const SUGGESTION_SCHEMA = {
@@ -123,7 +123,7 @@ async function callModel(system: string, prompt: string, name: string, schema: R
       input: [{ role: "user", content: `${prompt}\n\nReturn JSON.` }],
       text: { format: { type: "json_schema", name, schema, strict: true } },
     });
-    const out = (res as { output?: { type: string; content?: { type: string; text?: string }[] }[] }).output ?? [];
+    const out = (res as { output?: { type: string | undefined; content?: { type: string | undefined; text?: string | undefined }[] }[] }).output ?? [];
     const text = out
       .flatMap((o) => (o.type === "message" ? (o.content ?? []) : []))
       .filter((c) => c.type === "output_text")
@@ -152,7 +152,7 @@ export const runStoryAssistant = createServerFn({ method: "POST" })
     return input;
   })
   .handler(async ({ data: body }) => {
-    const genre = GENRE_MOODS[body.genreId] ?? GENRE_MOODS.calm;
+    const genre = GENRE_MOODS[body.genreId] ?? GENRE_MOODS['calm'];
     const ctx = body.projectContext ? `Project Context (from the writer's Crea-Link project):\n${clip(body.projectContext, 2000)}` : null;
 
     if (body.action === "revise_suggestion") {
@@ -211,7 +211,7 @@ export const runStoryAssistant = createServerFn({ method: "POST" })
           required: ["content"],
         },
       );
-      return { mode: "live" as const, content: String(parsed.content ?? "") };
+      return { mode: "live" as const, content: String(parsed['content'] ?? "") };
     }
 
     const seen = (Array.isArray(body.seenTitles) ? body.seenTitles : []).slice(-40).map((t) => clip(t, 200));
@@ -220,7 +220,7 @@ export const runStoryAssistant = createServerFn({ method: "POST" })
       `You are an AI Story Assistant acting as a thoughtful creative partner. Help the writer improve their own ideas—never take over their authorship.`,
       `Selected Genre & Story Mood: ${genre.label} (${genre.mood}).`,
       `Atmosphere: ${genre.atmosphere}. Conflict Lens: ${genre.conflict}. Prose Voice: ${genre.voice}.`,
-      `Assistance focus: ${TOOL_FOCUS[body.toolId] ?? TOOL_FOCUS.idea}`,
+      `Assistance focus: ${TOOL_FOCUS[body.toolId] ?? TOOL_FOCUS['idea']}`,
       ctx,
       body.characterFocus ? `Character Focus: ${clip(body.characterFocus, 200)}` : null,
       body.dialogueTone ? `Requested Dialogue Emotional Tone: ${clip(body.dialogueTone, 100)}` : null,
@@ -250,7 +250,7 @@ export const runStoryAssistant = createServerFn({ method: "POST" })
     );
     return {
       mode: "live" as const,
-      summary: String(parsed.summary ?? ""),
-      suggestions: (Array.isArray(parsed.suggestions) ? parsed.suggestions : []) as Suggestion[],
+      summary: String(parsed['summary'] ?? ""),
+      suggestions: (Array.isArray(parsed['suggestions']) ? parsed['suggestions'] : []) as Suggestion[],
     };
   });

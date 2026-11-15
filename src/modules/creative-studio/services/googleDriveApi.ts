@@ -4,11 +4,11 @@ export interface DriveFileItem {
   id: string;
   name: string;
   mimeType: string;
-  size?: string;
-  modifiedTime?: string;
-  thumbnailLink?: string;
-  iconLink?: string;
-  webViewLink?: string;
+  size?: string | undefined;
+  modifiedTime?: string | undefined;
+  thumbnailLink?: string | undefined;
+  iconLink?: string | undefined;
+  webViewLink?: string | undefined;
 }
 
 export type DriveFileFilter = 'all' | 'image' | 'video' | 'audio' | 'document';
@@ -29,11 +29,11 @@ async function requireToken(): Promise<string> {
 }
 
 export async function listDriveFiles(options: {
-  query?: string;
-  filter?: DriveFileFilter;
-  pageToken?: string;
-  pageSize?: number;
-}): Promise<{ files: DriveFileItem[]; nextPageToken?: string }> {
+  query?: string | undefined;
+  filter?: DriveFileFilter | undefined;
+  pageToken?: string | undefined;
+  pageSize?: number | undefined;
+}): Promise<{ files: DriveFileItem[]; nextPageToken?: string | undefined }> {
   const token = await requireToken();
 
   const clauses: string[] = [

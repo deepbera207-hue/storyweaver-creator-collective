@@ -78,7 +78,7 @@ export function connectionIdFor(a: string, b: string) {
   return [a, b].sort().join('__');
 }
 
-function fail(err: { message?: string } | null | undefined, fallback: string): never {
+function fail(err: { message?: string | undefined } | null | undefined, fallback: string): never {
   throw new Error(err?.message || fallback);
 }
 
@@ -91,7 +91,7 @@ function categoryFor(mime: string): MediaCategory {
 
 /** Debounced realtime subscription that calls `refresh` whenever any watched table changes. */
 function watch(
-  tables: { table: string; filter?: string }[],
+  tables: { table: string; filter?: string | undefined }[],
   refresh: () => void | Promise<void>
 ): Unsubscribe {
   let timer: ReturnType<typeof setTimeout> | null = null;
@@ -139,7 +139,7 @@ async function mapProfiles(rows: ProfileRow[]): Promise<UserProfile[]> {
   });
 }
 
-async function fetchProfiles(ids?: string[]): Promise<UserProfile[]> {
+async function fetchProfiles(ids?: string[] | undefined): Promise<UserProfile[]> {
   let q = supabase
     .from('profiles')
     .select('id, full_name, username, avatar_url, bio, studio_role, skill_category, skills, experience, onboarded');
@@ -263,23 +263,23 @@ async function patchBoards(
   if (error) fail(error, 'Could not save changes');
 }
 
-function mapScript(row: Record<string, unknown>, fileUrl?: string): ScriptData {
+function mapScript(row: Record<string, unknown>, fileUrl?: string | undefined): ScriptData {
   return {
-    id: `script_${row.project_id}`,
-    fileName: String(row.file_name ?? 'script.txt'),
-    format: (row.format as ScriptData['format']) || 'editor',
+    id: `script_${row['project_id']}`,
+    fileName: String(row['file_name'] ?? 'script.txt'),
+    format: (row['format'] as ScriptData['format']) || 'editor',
     fileUrl,
-    textContent: String(row.text_content ?? ''),
-    htmlPreview: (row.html_preview as string) || undefined,
-    accessLevel: (row.access_level as ScriptAccessLevel) || 'team_members',
-    uploadedBy: String(row.uploaded_by ?? ''),
-    uploadedByName: String(row.uploaded_by_name ?? ''),
-    updatedAt: String(row.updated_at ?? new Date().toISOString()),
-    fileSize: (row.file_size as number) ?? undefined,
+    textContent: String(row['text_content'] ?? ''),
+    htmlPreview: (row['html_preview'] as string) || undefined,
+    accessLevel: (row['access_level'] as ScriptAccessLevel) || 'team_members',
+    uploadedBy: String(row['uploaded_by'] ?? ''),
+    uploadedByName: String(row['uploaded_by_name'] ?? ''),
+    updatedAt: String(row['updated_at'] ?? new Date().toISOString()),
+    fileSize: (row['file_size'] as number) ?? undefined,
   };
 }
 
-async function extractScript(file: Blob, fileName: string): Promise<{ format: 'docx' | 'pdf' | 'txt'; text: string; html?: string }> {
+async function extractScript(file: Blob, fileName: string): Promise<{ format: 'docx' | 'pdf' | 'txt'; text: string; html?: string | undefined }> {
   const ext = fileName.toLowerCase().split('.').pop() || '';
   if (ext === 'txt' || file.type === 'text/plain') return { format: 'txt', text: await file.text() };
   if (ext === 'docx') {
@@ -448,13 +448,13 @@ export const studioService = {
 
         const media = mediaRes.data ?? [];
         const msgs = msgRes.data ?? [];
-        const attRefs = msgs.map((m) => (m.attachment as { fileUrl?: string } | null)?.fileUrl);
+        const attRefs = msgs.map((m) => (m.attachment as { fileUrl?: string | undefined } | null)?.fileUrl);
         const scriptRow = scriptRes.data as Record<string, unknown> | null;
         const urls = await resolveStorageUrls([
           ...media.map((m) => storageRef('project-files', m.file_path)),
           ...attRefs,
           ...msgs.map((m) => m.sender_avatar),
-          scriptRow?.file_path ? storageRef('project-files', String(scriptRow.file_path)) : null,
+          scriptRow?.['file_path'] ? storageRef('project-files', String(scriptRow['file_path'])) : null,
         ]);
 
         const reactions = new Map<string, Record<string, string[]>>();
@@ -511,7 +511,7 @@ export const studioService = {
         }));
 
         const script = scriptRow
-          ? mapScript(scriptRow, scriptRow.file_path ? urls.get(storageRef('project-files', String(scriptRow.file_path))) : undefined)
+          ? mapScript(scriptRow, scriptRow['file_path'] ? urls.get(storageRef('project-files', String(scriptRow['file_path']))) : undefined)
           : null;
 
         onUpdate({
@@ -537,8 +537,8 @@ export const studioService = {
       status: ProjectStatus;
       isDraft: boolean;
       requiredRoles: CreativeRole[];
-      scriptText?: string;
-      scriptAccessLevel?: ScriptAccessLevel;
+      scriptText?: string | undefined;
+      scriptAccessLevel?: ScriptAccessLevel | undefined;
     }
   ): Promise<CreativeProject> {
     const genres: Genre[] = payload.genres.length ? payload.genres.slice(0, 10) : ['Other'];
@@ -586,13 +586,13 @@ export const studioService = {
     payload: Partial<{ title: string; description: string; genres: Genre[]; primaryGenre: Genre; status: ProjectStatus; isDraft: boolean; requiredRoles: CreativeRole[] }>
   ): Promise<void> {
     const u: Record<string, unknown> = {};
-    if (payload.title !== undefined) u.title = payload.title.trim().slice(0, 140) || 'Untitled Project';
-    if (payload.description !== undefined) u.description = payload.description.trim().slice(0, 2000);
-    if (payload.genres !== undefined) u.genres = payload.genres.slice(0, 10);
-    if (payload.primaryGenre !== undefined) u.primary_genre = payload.primaryGenre;
-    if (payload.status !== undefined) u.status = payload.status;
-    if (payload.isDraft !== undefined) u.is_draft = payload.isDraft;
-    if (payload.requiredRoles !== undefined) u.required_roles = payload.requiredRoles.slice(0, 15);
+    if (payload.title !== undefined) u['title'] = payload.title.trim().slice(0, 140) || 'Untitled Project';
+    if (payload.description !== undefined) u['description'] = payload.description.trim().slice(0, 2000);
+    if (payload.genres !== undefined) u['genres'] = payload.genres.slice(0, 10);
+    if (payload.primaryGenre !== undefined) u['primary_genre'] = payload.primaryGenre;
+    if (payload.status !== undefined) u['status'] = payload.status;
+    if (payload.isDraft !== undefined) u['is_draft'] = payload.isDraft;
+    if (payload.requiredRoles !== undefined) u['required_roles'] = payload.requiredRoles.slice(0, 15);
     const { error } = await supabase.from('projects').update(u as never).eq('id', projectId);
     if (error) fail(error, 'Could not update project');
   },
@@ -632,7 +632,7 @@ export const studioService = {
     projectId: string,
     user: UserProfile,
     existing: ScriptData | null,
-    payload: { textContent?: string; fileName?: string; accessLevel?: ScriptAccessLevel }
+    payload: { textContent?: string | undefined; fileName?: string | undefined; accessLevel?: ScriptAccessLevel | undefined }
   ): Promise<void> {
     const text = payload.textContent !== undefined ? payload.textContent : existing?.textContent ?? '';
     const keepFile = payload.textContent === undefined;
@@ -699,7 +699,7 @@ export const studioService = {
   async createInvite(
     project: CreativeProject,
     owner: UserProfile,
-    payload: { roleOffered?: CreativeRole; targetUserId?: string; targetName?: string }
+    payload: { roleOffered?: CreativeRole | undefined; targetUserId?: string | undefined; targetName?: string | undefined }
   ): Promise<ProjectInvite> {
     const code = makeInviteCode();
     const { error } = await supabase.from('project_invites').insert({
@@ -737,24 +737,24 @@ export const studioService = {
     if (error) fail(error, `Invite code "${clean}" was not found.`);
     const d = data as Record<string, string>;
     return {
-      id: d.code,
-      code: d.code,
-      projectId: d.project_id,
-      projectTitle: d.project_title,
-      projectPrimaryGenre: d.project_primary_genre as Genre,
-      projectStatus: d.project_status as ProjectStatus,
-      ownerId: d.owner_id,
-      ownerName: d.owner_name,
-      roleOffered: (d.role_offered as CreativeRole) || undefined,
-      targetUserId: d.target_user_id || undefined,
-      targetName: d.target_name || undefined,
-      createdBy: d.created_by,
-      createdAt: d.created_at,
-      status: d.status === 'accepted' ? 'accepted' : 'pending',
+      id: d['code'],
+      code: d['code'],
+      projectId: d['project_id'],
+      projectTitle: d['project_title'],
+      projectPrimaryGenre: d['project_primary_genre'] as Genre,
+      projectStatus: d['project_status'] as ProjectStatus,
+      ownerId: d['owner_id'],
+      ownerName: d['owner_name'],
+      roleOffered: (d['role_offered'] as CreativeRole) || undefined,
+      targetUserId: d['target_user_id'] || undefined,
+      targetName: d['target_name'] || undefined,
+      createdBy: d['created_by'],
+      createdAt: d['created_at'],
+      status: d['status'] === 'accepted' ? 'accepted' : 'pending',
     };
   },
 
-  async redeemInvite(code: string, _user: UserProfile, creativeRole?: CreativeRole): Promise<{ projectId: string; alreadyMember: boolean }> {
+  async redeemInvite(code: string, _user: UserProfile, creativeRole?: CreativeRole | undefined): Promise<{ projectId: string; alreadyMember: boolean }> {
     const { data, error } = await supabase.rpc('redeem_invite', { _code: code.trim().toUpperCase(), _role: creativeRole ?? '' });
     if (error) fail(error, 'Could not redeem invite');
     const d = data as { project_id: string; already_member: boolean };
@@ -767,7 +767,7 @@ export const studioService = {
   },
 
   // ---------------------------------------------------------------- connections
-  async sendConnectionRequest(fromUser: UserProfile, toCreator: UserProfile, note?: string): Promise<void> {
+  async sendConnectionRequest(fromUser: UserProfile, toCreator: UserProfile, note?: string | undefined): Promise<void> {
     if (fromUser.id === toCreator.id) throw new Error('You cannot connect with yourself.');
     const { data: existing } = await supabase
       .from('connections')
@@ -801,7 +801,7 @@ export const studioService = {
   },
 
   // ---------------------------------------------------------------- boards
-  async createMilestone(projectId: string, _userId: string, payload: { title: string; targetDate: string; description?: string }): Promise<void> {
+  async createMilestone(projectId: string, _userId: string, payload: { title: string; targetDate: string; description?: string | undefined }): Promise<void> {
     await patchBoards(projectId, (row) => ({
       milestones: [
         ...((row.milestones as Milestone[]) ?? []),
@@ -816,7 +816,7 @@ export const studioService = {
     }));
   },
 
-  async updateMilestone(projectId: string, msId: string, payload: { status?: TaskStatus; title?: string; targetDate?: string }): Promise<void> {
+  async updateMilestone(projectId: string, msId: string, payload: { status?: TaskStatus | undefined; title?: string | undefined; targetDate?: string | undefined }): Promise<void> {
     await patchBoards(projectId, (row) => ({
       milestones: ((row.milestones as Milestone[]) ?? []).map((m) => (m.id === msId ? { ...m, ...payload } : m)),
     }));
@@ -825,7 +825,7 @@ export const studioService = {
   async createTask(
     project: CreativeProject,
     _userId: string,
-    payload: { title: string; description?: string; milestoneId?: string; assigneeId?: string; dueDate?: string }
+    payload: { title: string; description?: string | undefined; milestoneId?: string | undefined; assigneeId?: string | undefined; dueDate?: string | undefined }
   ): Promise<void> {
     const assignee = payload.assigneeId ? project.members.find((m) => m.userId === payload.assigneeId) : undefined;
     const now = new Date().toISOString();
@@ -847,7 +847,7 @@ export const studioService = {
     }));
   },
 
-  async updateTask(project: CreativeProject, taskId: string, payload: { status?: TaskStatus; assigneeId?: string | null; title?: string }): Promise<void> {
+  async updateTask(project: CreativeProject, taskId: string, payload: { status?: TaskStatus | undefined; assigneeId?: string | null | undefined; title?: string | undefined }): Promise<void> {
     await patchBoards(project.id, (row) => ({
       tasks: ((row.tasks as ProjectTask[]) ?? []).map((t) => {
         if (t.id !== taskId) return t;
@@ -896,7 +896,7 @@ export const studioService = {
   },
 
   // ---------------------------------------------------------------- chat & media
-  async postMessage(projectId: string, user: UserProfile, payload: { content: string; channel: 'chat' | 'discussion'; topicTitle?: string }): Promise<void> {
+  async postMessage(projectId: string, user: UserProfile, payload: { content: string; channel: 'chat' | 'discussion'; topicTitle?: string | undefined }): Promise<void> {
     const { error } = await supabase.from('project_messages').insert({
       project_id: projectId,
       channel: payload.channel,
@@ -930,7 +930,7 @@ export const studioService = {
     user: UserProfile,
     file: File | Blob,
     fileName: string,
-    options: { postToChat?: boolean; channel?: 'chat' | 'discussion'; caption?: string; mediaCategory?: MediaCategory; durationSeconds?: number; topicTitle?: string },
+    options: { postToChat?: boolean | undefined; channel?: 'chat' | 'discussion' | undefined; caption?: string | undefined; mediaCategory?: MediaCategory | undefined; durationSeconds?: number | undefined; topicTitle?: string | undefined },
     onProgress?: (p: number) => void
   ): Promise<void> {
     onProgress?.(10);
@@ -987,7 +987,7 @@ export const studioService = {
     projectId: string,
     user: UserProfile,
     accessToken: string,
-    payload: { fileId: string; fileName: string; mimeType: string; postToChat?: boolean; channel?: 'chat' | 'discussion'; topicTitle?: string; caption?: string }
+    payload: { fileId: string; fileName: string; mimeType: string; postToChat?: boolean | undefined; channel?: 'chat' | 'discussion' | undefined; topicTitle?: string | undefined; caption?: string | undefined }
   ): Promise<void> {
     const dl = await downloadDriveFile(accessToken, payload.fileId, payload.mimeType, payload.fileName);
     await this.uploadMedia(projectId, user, dl.blob, dl.fileName, {
@@ -1002,7 +1002,7 @@ export const studioService = {
   async addPortfolioItem(
     projectId: string,
     user: UserProfile,
-    payload: { title: string; description: string; mediaType: PortfolioMediaType; contributors: string[]; file?: File | Blob | null; mediaUrl?: string; fileName?: string },
+    payload: { title: string; description: string; mediaType: PortfolioMediaType; contributors: string[]; file?: File | Blob | null | undefined; mediaUrl?: string | undefined; fileName?: string | undefined },
     onProgress?: (p: number) => void
   ): Promise<void> {
     let url = payload.mediaUrl?.trim() || '';

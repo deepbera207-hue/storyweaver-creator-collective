@@ -11,30 +11,30 @@ export const GOOGLE_DRIVE_SCOPES = [
   'https://www.googleapis.com/auth/drive.readonly',
 ] as const;
 
-type TokenClient = { requestAccessToken: (o?: { prompt?: string }) => void };
+type TokenClient = { requestAccessToken: (o?: { prompt?: string | undefined }) => void };
 type GoogleOAuth = {
   accounts: {
     oauth2: {
       initTokenClient: (cfg: {
         client_id: string;
         scope: string;
-        callback: (r: { access_token?: string; error?: string; error_description?: string }) => void;
-        error_callback?: (e: { message?: string }) => void;
+        callback: (r: { access_token?: string | undefined; error?: string | undefined; error_description?: string | undefined }) => void;
+        error_callback?: (e: { message?: string | undefined }) => void;
       }) => TokenClient;
     };
   };
 };
 
-type DriveUser = { email?: string; displayName?: string };
+type DriveUser = { email?: string | undefined; displayName?: string | undefined };
 const DRIVE_USER: DriveUser = { email: 'Google Drive connected', displayName: 'Google Drive' };
 let cachedAccessToken: string | null = null;
 
 export function isDriveConfigured(): boolean {
-  return Boolean(import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID);
+  return Boolean(import.meta.env['VITE_GOOGLE_DRIVE_CLIENT_ID']);
 }
 
 function loadGis(): Promise<GoogleOAuth> {
-  const w = window as unknown as { google?: GoogleOAuth };
+  const w = window as unknown as { google?: GoogleOAuth | undefined };
   if (w.google?.accounts?.oauth2) return Promise.resolve(w.google);
   return new Promise((resolve, reject) => {
     const s = document.createElement('script');
@@ -47,7 +47,7 @@ function loadGis(): Promise<GoogleOAuth> {
 }
 
 export const googleSignIn = async (): Promise<{ user: DriveUser; accessToken: string }> => {
-  const clientId = import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID as string | undefined;
+  const clientId = import.meta.env['VITE_GOOGLE_DRIVE_CLIENT_ID'] as string | undefined;
   if (!clientId) {
     throw new Error(
       'Google Drive import is not configured yet. Upload files from your device instead, or ask the app owner to add a Google Drive client ID.'

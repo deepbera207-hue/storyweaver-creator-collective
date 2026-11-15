@@ -23,9 +23,9 @@ export function CreatorAvatar({
   size = "md",
   className,
 }: {
-  creator: Pick<Creator, "name" | "genres"> & { avatarUrl?: string };
-  size?: "sm" | "md" | "lg" | "xl";
-  className?: string;
+  creator: Pick<Creator, "name" | "genres"> & { avatarUrl?: string | undefined };
+  size?: "sm" | "md" | "lg" | "xl" | undefined;
+  className?: string | undefined;
 }) {
   const dims = { sm: "size-8 text-sm", md: "size-11 text-base", lg: "size-16 text-2xl", xl: "size-28 text-5xl" }[size];
   return (
@@ -41,7 +41,7 @@ export function CreatorAvatar({
   );
 }
 
-export function GenreChip({ genre, primary, className }: { genre: GenreKey; primary?: boolean; className?: string }) {
+export function GenreChip({ genre, primary, className }: { genre: GenreKey; primary?: boolean | undefined; className?: string | undefined }) {
   return (
     <span
       style={genreChipStyle(genre)}
@@ -61,7 +61,7 @@ export function SkillChip({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function AvailabilityBadge({ value, className }: { value: Availability; className?: string }) {
+export function AvailabilityBadge({ value, className }: { value: Availability; className?: string | undefined }) {
   const dot = { open: "bg-status-accepted-ink", limited: "bg-status-pending-ink", booked: "bg-muted-foreground/50" }[value];
   return (
     <span className={cn("inline-flex items-center gap-1.5 text-xs text-muted-foreground", className)}>
@@ -71,7 +71,7 @@ export function AvailabilityBadge({ value, className }: { value: Availability; c
   );
 }
 
-export function CategoryLabel({ category, className }: { category: CategoryKey; className?: string }) {
+export function CategoryLabel({ category, className }: { category: CategoryKey; className?: string | undefined }) {
   const { icon: Icon, label } = CATEGORIES[category];
   return (
     <span className={cn("inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground", className)}>
@@ -81,7 +81,7 @@ export function CategoryLabel({ category, className }: { category: CategoryKey; 
   );
 }
 
-export function ConnectButton({ creator, size = "sm", className }: { creator: Creator; size?: ButtonProps["size"]; className?: string }) {
+export function ConnectButton({ creator, size = "sm", className }: { creator: Creator; size?: ButtonProps["size"] | undefined; className?: string | undefined }) {
   const status = useConnection(creator.id);
   if (status === "collaborating")
     return (
