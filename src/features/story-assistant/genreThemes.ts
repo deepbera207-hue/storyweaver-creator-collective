@@ -183,6 +183,48 @@ export const ASSISTANCE_TOOLS: AssistanceTool[] = [
       'Include lines of dialogue (in quotes or script format) to polish rhythm and tone.',
   },
   {
+    id: 'structure',
+    title: 'Story Structure',
+    description: 'Map acts, beats, and turning points so the shape of your story holds together.',
+    actionLabel: 'Review Story Structure',
+    placeholderHint: 'Paste an outline, synopsis, or the chapters you have so far.',
+  },
+  {
+    id: 'worldbuilding',
+    title: 'World-Building',
+    description: 'Deepen settings, cultures, rules, and history without overwriting your vision.',
+    actionLabel: 'Expand My World',
+    placeholderHint: 'Describe your setting, its rules, places, or societies.',
+  },
+  {
+    id: 'scene',
+    title: 'Scene Development',
+    description: 'Strengthen a single scene: goal, conflict, sensory detail, and exit beat.',
+    actionLabel: 'Develop This Scene',
+    placeholderHint: 'Paste the scene you want to develop or describe what happens in it.',
+  },
+  {
+    id: 'consistency',
+    title: 'Story Consistency',
+    description: 'Catch continuity slips, timeline gaps, and out-of-character moments.',
+    actionLabel: 'Check Consistency',
+    placeholderHint: 'Paste the chapters or scenes you want checked against each other.',
+  },
+  {
+    id: 'block',
+    title: 'Creative Block Help',
+    description: 'Gentle prompts and questions to get you moving again when you feel stuck.',
+    actionLabel: 'Help Me Get Unstuck',
+    placeholderHint: 'Tell the assistant where you are stuck and paste the last thing you wrote.',
+  },
+  {
+    id: 'alternatives',
+    title: 'Alternative Possibilities',
+    description: 'Explore "what if" branches for a moment, ending, or character choice.',
+    actionLabel: 'Show Alternatives',
+    placeholderHint: 'Paste the moment you want alternatives for.',
+  },
+  {
     id: 'feedback',
     title: 'Creative Feedback',
     description:

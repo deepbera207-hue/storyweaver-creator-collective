@@ -5,6 +5,12 @@ export type AssistantToolId =
   | 'character'
   | 'plot'
   | 'dialogue'
+  | 'structure'
+  | 'worldbuilding'
+  | 'scene'
+  | 'consistency'
+  | 'block'
+  | 'alternatives'
   | 'feedback';
 
 export type DialogueTone =
@@ -91,6 +97,7 @@ export interface SavedSession {
 
 export interface StoryAssistantRequest {
   action: 'generate_suggestions';
+  projectContext?: string;
   title: string;
   storyText: string;
   genreId: GenreId;
@@ -105,6 +112,7 @@ export interface StoryAssistantRequest {
 
 export interface ReviseSuggestionRequest {
   action: 'revise_suggestion';
+  projectContext?: string;
   title: string;
   storyText: string;
   genreId: GenreId;
@@ -115,6 +123,7 @@ export interface ReviseSuggestionRequest {
 
 export interface MergeStoryRequest {
   action: 'merge_story';
+  projectContext?: string;
   title: string;
   storyText: string;
   genreId: GenreId;
@@ -135,4 +144,10 @@ export interface StoryAssistantPageProps {
   onSaveSuggestion?: (suggestion: StorySuggestion) => void;
   /** Optional localStorage namespace key to avoid collisions across projects */
   storageKey?: string;
+  /** Initial story mood (derived from a project's primary genre) */
+  initialGenreId?: GenreId;
+  /** Project context passed to the AI so suggestions stay consistent with the project */
+  projectContext?: string;
+  /** Render inside another page (no full-screen backdrop) */
+  embedded?: boolean;
 }

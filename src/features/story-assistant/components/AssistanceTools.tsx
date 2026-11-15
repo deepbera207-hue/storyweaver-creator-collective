@@ -2,6 +2,12 @@ import React from 'react';
 import {
   Lightbulb,
   MessageSquareQuote,
+  LayoutList,
+  Globe2,
+  Clapperboard,
+  ShieldCheck,
+  Wand2,
+  GitBranch,
   PenLine,
   Sparkles,
   TrendingUp,
@@ -34,6 +40,18 @@ function ToolGlyph({ toolId }: { toolId: AssistantToolId }) {
       return <TrendingUp className="w-4 h-4" />;
     case 'dialogue':
       return <MessageSquareQuote className="w-4 h-4" />;
+    case 'structure':
+      return <LayoutList className="w-4 h-4" />;
+    case 'worldbuilding':
+      return <Globe2 className="w-4 h-4" />;
+    case 'scene':
+      return <Clapperboard className="w-4 h-4" />;
+    case 'consistency':
+      return <ShieldCheck className="w-4 h-4" />;
+    case 'block':
+      return <Wand2 className="w-4 h-4" />;
+    case 'alternatives':
+      return <GitBranch className="w-4 h-4" />;
     case 'feedback':
     default:
       return <PenLine className="w-4 h-4" />;
