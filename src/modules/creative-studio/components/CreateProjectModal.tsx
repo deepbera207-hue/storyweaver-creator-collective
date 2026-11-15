@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, FileText, Check, AlertCircle } from 'lucide-react';
 import {
   ALL_GENRES,

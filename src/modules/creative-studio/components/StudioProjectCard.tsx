@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { ArrowUpRight, Users, Lock } from 'lucide-react';
 import {
   computeProjectProgress,

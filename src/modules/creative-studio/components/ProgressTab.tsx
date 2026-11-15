@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { Plus, Trash2, CheckCircle2, Clock, Circle, Flag } from 'lucide-react';
 import {
   computeProjectProgress,

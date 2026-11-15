@@ -163,7 +163,7 @@ export function ResponsePanel({
 
           {response.mode === 'live' && (
             <div className="mb-3 text-xs text-slate-500 flex items-center gap-2 tabular-nums">
-              <span>Live Gemini AI</span>
+              <span>Live AI</span>
               <span aria-hidden="true">·</span>
               <span>Batch #{response.round}</span>
               {rejectedCount > 0 && (
