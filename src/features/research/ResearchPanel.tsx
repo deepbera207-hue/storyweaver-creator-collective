@@ -64,27 +64,89 @@ export function ResearchPanel({ storyContext, compact = false }: { storyContext?
   const [custom, setCustom] = useState("");
   const [status, setStatus] = useState<{ tone: "ok" | "warn"; text: string } | null>(null);
 
-  async function startResearch() {
+  const [fallback, setFallback] = useState<{ url: string; label: string; prompt: string | null } | null>(null);
+
+  function openExternal(url: string): boolean {
+    // Open synchronously inside the click so browsers don't treat it as a popup.
+    const win = window.open(url, "_blank");
+    if (win) {
+      try {
+        win.opener = null;
+      } catch {
+        /* cross-origin — ignore */
+      }
+      return true;
+    }
+    return false;
+  }
+
+  function copyTextSync(text: string): boolean {
+    // execCommand works inside embedded previews where the async Clipboard API is blocked.
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.top = "-1000px";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch {
+      return false;
+    }
+  }
+
+  async function copyText(text: string): Promise<boolean> {
+    if (copyTextSync(text)) return true;
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function startResearch() {
     const q = question.trim();
+    setFallback(null);
     if (!q) {
       setStatus({ tone: "warn", text: "Please enter a research question." });
       return;
     }
     if (platform === "google") {
-      window.open(RESEARCH_PLATFORMS.google.url + encodeURIComponent(q), "_blank", "noopener");
-      setStatus({ tone: "ok", text: "Opened Google Search in a new tab." });
+      const url = RESEARCH_PLATFORMS.google.url + encodeURIComponent(q);
+      const opened = openExternal(url);
+      if (opened) {
+        setStatus({ tone: "ok", text: "Opened Google Search in a new tab." });
+      } else {
+        setFallback({ url, label: "Google Search", prompt: null });
+        setStatus({ tone: "warn", text: "Your browser blocked the new tab. Use the link below to open Google." });
+      }
       return;
     }
-    try {
-      await navigator.clipboard.writeText(buildResearchPrompt(q, outputType, custom.trim(), storyContext));
-      window.open(RESEARCH_PLATFORMS[platform].url, "_blank", "noopener");
+    const target = RESEARCH_PLATFORMS[platform];
+    const prompt = buildResearchPrompt(q, outputType, custom.trim(), storyContext);
+    // Copy synchronously inside the click, then open the platform.
+    const copiedSync = copyTextSync(prompt);
+    const opened = openExternal(target.url);
+    if (copiedSync && opened) {
       setStatus({
         tone: "ok",
-        text: `Research prompt copied! Paste it into ${RESEARCH_PLATFORMS[platform].label} with Ctrl + V (or long-press → Paste on mobile).`,
+        text: `✓ Research prompt copied! Paste it into ${target.label} with Ctrl + V (or long-press → Paste on mobile).`,
       });
-    } catch {
-      setStatus({ tone: "warn", text: "Clipboard access failed. Please allow clipboard access and try again." });
+      return;
     }
+    setFallback({ url: target.url, label: target.label, prompt: copiedSync ? null : prompt });
+    setStatus({
+      tone: "warn",
+      text: !opened
+        ? `Your browser blocked the new tab. Use the button below to open ${target.label}.`
+        : `${target.label} opened, but copying was blocked. Copy the prompt below and paste it there.`,
+    });
   }
 
   return (
@@ -127,7 +189,7 @@ export function ResearchPanel({ storyContext, compact = false }: { storyContext?
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="e.g. Psychological effects of long-term isolation"
             className="mt-2 h-12 rounded-xl bg-card"
-            onKeyDown={(e) => e.key === "Enter" && void startResearch()}
+            onKeyDown={(e) => e.key === "Enter" && startResearch()}
           />
         </div>
         <div>
@@ -147,7 +209,7 @@ export function ResearchPanel({ storyContext, compact = false }: { storyContext?
         </div>
         <div>
           <Label>What type of output do you want?</Label>
-          <Select value={outputType} onValueChange={setOutputType} disabled={platform === "google"}>
+          <Select value={outputType} onValueChange={setOutputType}>
             <SelectTrigger className="mt-2 h-12 rounded-xl bg-card">
               <SelectValue />
             </SelectTrigger>
@@ -166,14 +228,13 @@ export function ResearchPanel({ storyContext, compact = false }: { storyContext?
             id="research-extra"
             value={custom}
             onChange={(e) => setCustom(e.target.value)}
-            disabled={platform === "google"}
             placeholder="Tell the platform exactly what you want to know…"
             className="mt-2 min-h-24 rounded-xl bg-card"
           />
         </div>
       </div>
 
-      <Button onClick={() => void startResearch()} size="lg" className="mt-6 w-full">
+      <Button onClick={startResearch} size="lg" className="mt-6 w-full">
         {platform === "google" ? <Search /> : <ClipboardCheck />}
         Research now <ArrowUpRight />
       </Button>
@@ -184,6 +245,40 @@ export function ResearchPanel({ storyContext, compact = false }: { storyContext?
         >
           {status.text}
         </p>
+      )}
+      {fallback && (
+        <div className="mt-4 space-y-3 rounded-2xl border border-border bg-card p-4">
+          {fallback.prompt && (
+            <>
+              <Textarea
+                readOnly
+                value={fallback.prompt.trim()}
+                onFocus={(e) => e.currentTarget.select()}
+                className="min-h-40 rounded-xl bg-background text-xs"
+                aria-label="Research prompt to copy"
+              />
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={async () => {
+                  const ok = await copyText(fallback.prompt ?? "");
+                  setStatus(
+                    ok
+                      ? { tone: "ok", text: `✓ Prompt copied! Paste it into ${fallback.label}.` }
+                      : { tone: "warn", text: "Copy is blocked here — select the text above and copy it manually." },
+                  );
+                }}
+              >
+                <ClipboardCheck /> Copy prompt
+              </Button>
+            </>
+          )}
+          <Button asChild className="w-full">
+            <a href={fallback.url} target="_blank" rel="noopener noreferrer">
+              Open {fallback.label} <ArrowUpRight />
+            </a>
+          </Button>
+        </div>
       )}
       <p className="mt-4 text-center text-xs text-muted-foreground">
         No API keys or subscriptions required by Crea-Link. Your research, your platform, your choice.
