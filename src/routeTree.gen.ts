@@ -17,6 +17,7 @@ import { Route as AuthenticatedCollaborationsRouteImport } from './routes/_authe
 import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticated/explore'
 import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
 import { Route as AuthenticatedMatchRouteImport } from './routes/_authenticated/match'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedRequestsRouteImport } from './routes/_authenticated/requests'
 import { Route as AuthenticatedCreatorsCreatorIdRouteImport } from './routes/_authenticated/creators.$creatorId'
 
@@ -60,6 +61,11 @@ const AuthenticatedMatchRoute = AuthenticatedMatchRouteImport.update({
   path: '/match',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedRequestsRoute = AuthenticatedRequestsRouteImport.update({
   id: '/requests',
   path: '/requests',
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/explore': typeof AuthenticatedExploreRoute
   '/feed': typeof AuthenticatedFeedRoute
   '/match': typeof AuthenticatedMatchRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
   '/requests': typeof AuthenticatedRequestsRoute
   '/creators/$creatorId': typeof AuthenticatedCreatorsCreatorIdRoute
 }
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/explore': typeof AuthenticatedExploreRoute
   '/feed': typeof AuthenticatedFeedRoute
   '/match': typeof AuthenticatedMatchRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
   '/requests': typeof AuthenticatedRequestsRoute
   '/creators/$creatorId': typeof AuthenticatedCreatorsCreatorIdRoute
 }
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/_authenticated/explore': typeof AuthenticatedExploreRoute
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
   '/_authenticated/match': typeof AuthenticatedMatchRoute
+  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/requests': typeof AuthenticatedRequestsRoute
   '/_authenticated/creators/$creatorId': typeof AuthenticatedCreatorsCreatorIdRoute
 }
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/feed'
     | '/match'
+    | '/onboarding'
     | '/requests'
     | '/creators/$creatorId'
   fileRoutesByTo: FileRoutesByTo
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/feed'
     | '/match'
+    | '/onboarding'
     | '/requests'
     | '/creators/$creatorId'
   id:
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/_authenticated/explore'
     | '/_authenticated/feed'
     | '/_authenticated/match'
+    | '/_authenticated/onboarding'
     | '/_authenticated/requests'
     | '/_authenticated/creators/$creatorId'
   fileRoutesById: FileRoutesById
@@ -209,6 +221,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMatchRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/requests': {
       id: '/_authenticated/requests'
       path: '/requests'
@@ -231,6 +250,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedExploreRoute: typeof AuthenticatedExploreRoute
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
   AuthenticatedMatchRoute: typeof AuthenticatedMatchRoute
+  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedRequestsRoute: typeof AuthenticatedRequestsRoute
   AuthenticatedCreatorsCreatorIdRoute: typeof AuthenticatedCreatorsCreatorIdRoute
 }
@@ -240,6 +260,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedExploreRoute: AuthenticatedExploreRoute,
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
   AuthenticatedMatchRoute: AuthenticatedMatchRoute,
+  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedRequestsRoute: AuthenticatedRequestsRoute,
   AuthenticatedCreatorsCreatorIdRoute: AuthenticatedCreatorsCreatorIdRoute,
 }

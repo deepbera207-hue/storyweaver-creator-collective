@@ -100,7 +100,7 @@ export function ProfileForm({ submitLabel, onSaved }: { submitLabel: string; onS
           className="group relative rounded-full"
           aria-label="Upload profile picture"
         >
-          {previewCreator && <CreatorAvatar creator={previewCreator} size="lg" />}
+          {previewCreator && <CreatorAvatar creator={previewCreator} size="xl" />}
           <span className="absolute inset-0 flex items-center justify-center rounded-full bg-foreground/0 text-card opacity-0 transition-all group-hover:bg-foreground/30 group-hover:opacity-100">
             {uploading ? <Loader2 className="size-5 animate-spin" /> : <Camera className="size-5" />}
           </span>
