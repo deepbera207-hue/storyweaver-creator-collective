@@ -49,7 +49,7 @@ export function CreatorCard({ creator, index = 0 }: { creator: Creator; index?: 
             <GenreChip key={g} genre={g} primary={i === 0} />
           ))}
         </div>
-        <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">{creator.tagline}</p>
+        <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">{creator.tagline || creator.bio}</p>
         <div className="flex flex-wrap gap-1.5">
           {creator.skills.slice(0, 3).map((s) => (
             <SkillChip key={s}>{s}</SkillChip>
@@ -57,7 +57,7 @@ export function CreatorCard({ creator, index = 0 }: { creator: Creator; index?: 
         </div>
         <div className="mt-auto flex items-center justify-between pt-2 text-xs text-muted-foreground">
           <span>
-            {creator.experience} · {creator.years} yrs
+            {creator.experience}{creator.years ? ` · ${creator.years} yrs` : ""}
           </span>
           <AvailabilityBadge value={creator.availability} />
         </div>
