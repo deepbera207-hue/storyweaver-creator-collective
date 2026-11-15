@@ -2,7 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import { CREATORS } from "@/data/creators";
+import type { Creator } from "@/data/creators";
+import { useStore, type FeedProject } from "@/lib/store";
+import { ProjectFeedCard } from "@/components/feed/ProjectFeedCard";
 import {
   AVAILABILITY,
   CATEGORIES,
@@ -30,7 +32,7 @@ type ExploreSearch = {
 const pick = <T extends string>(v: unknown, list: readonly T[]) =>
   typeof v === "string" && (list as readonly string[]).includes(v) ? (v as T) : undefined;
 
-export const Route = createFileRoute("/_authenticated/_authenticated/explore")({
+export const Route = createFileRoute("/_authenticated/explore")({
   validateSearch: (s: Record<string, unknown>): ExploreSearch => ({
     q: typeof s["q"] === "string" && s["q"] ? s["q"] : undefined,
     category: pick(s["category"], CATEGORY_KEYS),
@@ -51,7 +53,7 @@ export const Route = createFileRoute("/_authenticated/_authenticated/explore")({
   component: Explore,
 });
 
-function matchesQuery(q: string, c: (typeof CREATORS)[number]) {
+function matchesQuery(q: string, c: Creator) {
   const hay = [
     c.name,
     c.tagline,
@@ -70,6 +72,11 @@ function matchesQuery(q: string, c: (typeof CREATORS)[number]) {
     .split(/\s+/)
     .filter(Boolean)
     .every((word) => hay.includes(word));
+}
+
+function matchesProject(q: string, p: FeedProject) {
+  const hay = [p.title, p.description, p.primaryGenre, ...p.genres, ...p.requiredRoles, p.ownerName].join(" ").toLowerCase();
+  return q.toLowerCase().split(/\s+/).filter(Boolean).every((w) => hay.includes(w));
 }
 
 function Explore() {
@@ -101,9 +108,10 @@ function Explore() {
     return () => clearTimeout(t);
   }, [key]);
 
+  const { creators, projects } = useStore();
   const results = useMemo(
     () =>
-      CREATORS.filter(
+      creators.filter(
         (c) =>
           (!search.q || matchesQuery(search.q, c)) &&
           (!search.category || c.category === search.category) &&
@@ -111,7 +119,11 @@ function Explore() {
           (!search.experience || c.experience === search.experience) &&
           (!search.availability || c.availability === search.availability),
       ),
-    [search],
+    [search, creators],
+  );
+  const projectResults = useMemo(
+    () => (search.q ? projects.filter((p) => matchesProject(search.q!, p)).slice(0, 6) : []),
+    [search.q, projects],
   );
 
   const active = [search.q, search.category, search.genre, search.experience, search.availability].filter(Boolean).length;
@@ -119,9 +131,9 @@ function Explore() {
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Explore Creators"
-        title="Everyone, in one place."
-        description="Search by name, genre, skill or feeling. Results update as you type."
+        eyebrow="Discover Creators"
+        title="Find your collaborators."
+        description="Search real Crea-Link creators by name, craft, genre, skill or interest — and spot projects that match."
       />
 
       <div className="surface z-30 space-y-4 rounded-3xl p-4 md:sticky md:top-[7.25rem] md:p-5">
@@ -214,8 +226,12 @@ function Explore() {
         </div>
       ) : results.length === 0 ? (
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="surface rounded-3xl p-12 text-center">
-          <p className="font-display text-3xl">No one matches that yet.</p>
-          <p className="mt-2 text-sm text-muted-foreground">Try fewer filters or a broader word like “fantasy” or “editing”.</p>
+          <p className="font-display text-3xl">{creators.length === 0 ? "No other creators have joined yet." : "No one matches that yet."}</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {creators.length === 0
+              ? "Crea-Link only shows real people. Invite friends to sign up, or start a project so others can find you."
+              : "Try fewer filters or a broader word like “fantasy” or “editing”."}
+          </p>
           <Button className="mt-6" variant="outline" onClick={() => (setText(""), navigate({ search: {}, replace: true }))}>
             Reset filters
           </Button>
@@ -228,6 +244,17 @@ function Explore() {
             ))}
           </AnimatePresence>
         </motion.div>
+      )}
+
+      {projectResults.length > 0 && (
+        <section className="space-y-4">
+          <h2 className="font-display text-3xl">Projects matching “{search.q}”</h2>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {projectResults.map((p, i) => (
+              <ProjectFeedCard key={p.id} project={p} index={i} />
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );

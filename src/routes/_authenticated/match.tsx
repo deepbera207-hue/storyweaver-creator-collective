@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus, RotateCcw, Sparkles, X } from "lucide-react";
-import { CREATORS } from "@/data/creators";
 import {
   CATEGORIES,
   CATEGORY_KEYS,
@@ -14,13 +13,13 @@ import {
 } from "@/lib/categories";
 import { GENRE_KEYS, GENRES, genreStyle, type GenreKey } from "@/lib/genres";
 import { briefFromProfile, rankMatches, type MatchBrief } from "@/lib/matchmaking";
-import { useStore } from "@/lib/store";
+import { useMe, useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/motion";
 import { MatchCard } from "@/components/match/MatchCard";
 
-export const Route = createFileRoute("/_authenticated/_authenticated/match")({
+export const Route = createFileRoute("/_authenticated/match")({
   head: () => ({
     meta: [
       { title: "Creative matchmaking — Crea-Link" },
@@ -86,7 +85,8 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function MatchPage() {
-  const { me, hydrated } = useStore();
+  const { hydrated, creators } = useStore();
+  const me = useMe();
   const [brief, setBrief] = useState<MatchBrief>(() => briefFromProfile(me));
   const [skillText, setSkillText] = useState("");
   const [thinking, setThinking] = useState(false);
@@ -103,7 +103,7 @@ function MatchPage() {
     return () => clearTimeout(t);
   }, [key]);
 
-  const results = useMemo(() => rankMatches(brief, CREATORS, 6), [brief]);
+  const results = useMemo(() => rankMatches(brief, creators, 6), [brief, creators]);
 
   const toggleIn = <T,>(list: T[], v: T) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 
@@ -118,13 +118,13 @@ function MatchPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="AI-assisted matchmaking"
+        eyebrow="Smart matchmaking"
         title={
           <>
             Find your <span className="match-gradient-text italic">creative match</span>
           </>
         }
-        description="Describe your project and we'll rank compatible creators by genre, interests, skills, experience and how they like to work."
+        description="Describe your project and Crea-Link ranks real creators by genre, interests, skills, experience and how they like to work. Scores use transparent matching rules, not AI."
       >
       </PageHeader>
 

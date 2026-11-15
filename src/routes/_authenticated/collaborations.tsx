@@ -2,14 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { ArrowRight, Handshake } from "lucide-react";
-import { ME_ID } from "@/data/creators";
 import { genreStyle } from "@/lib/genres";
-import { useStore } from "@/lib/store";
+import { useMe, useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/motion";
 import { CategoryLabel, CreatorAvatar, GenreChip, SkillChip } from "@/components/creator/bits";
 
-export const Route = createFileRoute("/_authenticated/_authenticated/collaborations")({
+export const Route = createFileRoute("/_authenticated/collaborations")({
   head: () => ({
     meta: [
       { title: "My collaborations — Crea-Link" },
@@ -24,7 +23,9 @@ export const Route = createFileRoute("/_authenticated/_authenticated/collaborati
 });
 
 function Collaborations() {
-  const { requests, getPerson, me, hydrated } = useStore();
+  const { requests, getPerson, hydrated, user } = useStore();
+  const me = useMe();
+  const ME_ID = user?.id;
   const active = requests
     .filter((r) => r.status === "accepted" && (r.fromId === ME_ID || r.toId === ME_ID))
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));

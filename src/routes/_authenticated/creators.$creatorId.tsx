@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ConnectButton } from "@/components/creator/bits";
 import { ProfileView } from "@/components/creator/ProfileView";
 
-export const Route = createFileRoute("/_authenticated/_authenticated/creators/$creatorId")({
+export const Route = createFileRoute("/_authenticated/creators/$creatorId")({
   loader: ({ params }) => {
     const creator = findCreator(params.creatorId);
     if (!creator) throw notFound();

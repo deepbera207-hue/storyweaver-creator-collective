@@ -13,7 +13,7 @@ import { CreatorCard } from "@/components/creator/CreatorCard";
 import { AvailabilityBadge, CategoryLabel, ConnectButton, CreatorAvatar, GenreChip } from "@/components/creator/bits";
 import { MatchCard } from "@/components/match/MatchCard";
 
-export const Route = createFileRoute("/_authenticated/_authenticated/feed")({
+export const Route = createFileRoute("/_authenticated/feed")({
   head: () => ({
     meta: [
       { title: "Discover creators — Crea-Link" },

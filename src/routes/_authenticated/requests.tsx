@@ -1,6 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { ME_ID } from "@/data/creators";
 import { useStore, type RequestStatus } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,7 @@ type Tab = "received" | "sent";
 type StatusFilter = RequestStatus | "all";
 type RequestsSearch = { tab?: Tab | undefined; status?: StatusFilter | undefined };
 
-export const Route = createFileRoute("/_authenticated/_authenticated/requests")({
+export const Route = createFileRoute("/_authenticated/requests")({
   validateSearch: (s: Record<string, unknown>): RequestsSearch => ({
     tab: s["tab"] === "sent" || s["tab"] === "received" ? s["tab"] : undefined,
     status: ["pending", "accepted", "declined", "all"].includes(s["status"] as string)
@@ -67,7 +66,8 @@ function Segmented<T extends string>({
 }
 
 function RequestsPage() {
-  const { requests, hydrated } = useStore();
+  const { requests, hydrated, user } = useStore();
+  const ME_ID = user?.id;
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/requests" });
   const tab: Tab = search.tab ?? "received";

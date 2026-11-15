@@ -351,3 +351,27 @@ export function useConnection(creatorId: string) {
   if (related.some((r) => r.status === "pending" && r.toId === myId)) return "incoming" as const;
   return "none" as const;
 }
+
+const EMPTY_ME: Creator = {
+  id: "",
+  name: "You",
+  location: "",
+  category: "storyteller",
+  genres: ["peaceful"],
+  tagline: "",
+  bio: "",
+  skills: [],
+  interests: [],
+  experience: "Emerging",
+  years: 0,
+  availability: "open",
+  collabPrefs: [],
+  lookingFor: [],
+  portfolio: [],
+  projects: [],
+};
+
+/** The signed-in creator (never null inside the authenticated app shell). */
+export function useMe(): Creator {
+  return useStore().me ?? EMPTY_ME;
+}
