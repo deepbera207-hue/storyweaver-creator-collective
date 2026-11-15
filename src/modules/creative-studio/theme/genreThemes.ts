@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { Genre, ProjectStatus } from '../types/studio';
+import { paletteForGenre } from '@/lib/genre-theme';
 
 export type PaletteFamily = 'romance' | 'calm' | 'social' | 'adventure' | 'thriller';
 
@@ -149,33 +150,17 @@ export const PALETTES: Record<PaletteFamily, GenreThemeTokens> = {
   },
 };
 
-const GENRE_TO_PALETTE: Record<Genre, PaletteFamily> = {
-  'Love / Romance': 'romance',
-  Drama: 'romance',
-  'Slice of Life': 'calm',
-  'Healing / Comfort': 'calm',
-  Animation: 'calm',
-  '2D Animation': 'calm',
-  '3D Animation': 'calm',
-  Documentary: 'social',
-  Mystery: 'thriller',
-  Comedy: 'calm',
-  Other: 'calm',
-  'Social Awareness': 'social',
-  'Humanity / Morality': 'social',
-  'Coming of Age': 'social',
-  Fantasy: 'adventure',
-  Action: 'adventure',
-  Adventure: 'adventure',
-  'Science Fiction': 'adventure',
-  Revenge: 'thriller',
-  'Psychological Thriller': 'thriller',
-  Horror: 'thriller',
-};
+const KEY_TO_FAMILY = {
+  romance: 'romance',
+  peaceful: 'calm',
+  moral: 'social',
+  adventure: 'adventure',
+  dark: 'thriller',
+} as const satisfies Record<string, PaletteFamily>;
 
 export function getGenreTheme(genre?: Genre): GenreThemeTokens {
   if (!genre) return PALETTES.calm;
-  return PALETTES[GENRE_TO_PALETTE[genre] ?? 'calm'];
+  return PALETTES[KEY_TO_FAMILY[paletteForGenre(genre)]];
 }
 
 export function getThemeCssVars(genre?: Genre): CSSProperties {
