@@ -6,15 +6,15 @@ import { ME_ID } from "@/data/creators";
 import { genreStyle } from "@/lib/genres";
 import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
-import { DemoBadge, PageHeader } from "@/components/motion";
+import { PageHeader } from "@/components/motion";
 import { CategoryLabel, CreatorAvatar, GenreChip, SkillChip } from "@/components/creator/bits";
 
-export const Route = createFileRoute("/collaborations")({
+export const Route = createFileRoute("/_authenticated/_authenticated/collaborations")({
   head: () => ({
     meta: [
-      { title: "My collaborations — Ensemble" },
+      { title: "My collaborations — Crea-Link" },
       { name: "description", content: "Every project you're building with other creators, in one calm place." },
-      { property: "og:title", content: "My collaborations — Ensemble" },
+      { property: "og:title", content: "My collaborations — Crea-Link" },
       { property: "og:description", content: "Every project you're building with other creators, in one calm place." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -37,7 +37,6 @@ function Collaborations() {
         title="What you're making together."
         description="Projects where both sides said yes."
       >
-        <DemoBadge />
       </PageHeader>
 
       {hydrated && pendingIncoming > 0 && (

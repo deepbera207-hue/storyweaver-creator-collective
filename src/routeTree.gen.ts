@@ -10,33 +10,117 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedCollaborationsRouteImport } from './routes/_authenticated/collaborations'
+import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticated/explore'
+import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
+import { Route as AuthenticatedMatchRouteImport } from './routes/_authenticated/match'
+import { Route as AuthenticatedRequestsRouteImport } from './routes/_authenticated/requests'
+import { Route as AuthenticatedCreatorsCreatorIdRouteImport } from './routes/_authenticated/creators.$creatorId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCollaborationsRoute =
+  AuthenticatedCollaborationsRouteImport.update({
+    id: '/_authenticated/collaborations',
+    path: '/collaborations',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedExploreRoute = AuthenticatedExploreRouteImport.update({
+  id: '/_authenticated/explore',
+  path: '/explore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
+  id: '/_authenticated/feed',
+  path: '/feed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedMatchRoute = AuthenticatedMatchRouteImport.update({
+  id: '/_authenticated/match',
+  path: '/match',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRequestsRoute = AuthenticatedRequestsRouteImport.update({
+  id: '/_authenticated/requests',
+  path: '/requests',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedCreatorsCreatorIdRoute =
+  AuthenticatedCreatorsCreatorIdRouteImport.update({
+    id: '/_authenticated/creators/$creatorId',
+    path: '/creators/$creatorId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/collaborations': typeof AuthenticatedCollaborationsRoute
+  '/explore': typeof AuthenticatedExploreRoute
+  '/feed': typeof AuthenticatedFeedRoute
+  '/match': typeof AuthenticatedMatchRoute
+  '/requests': typeof AuthenticatedRequestsRoute
+  '/creators/$creatorId': typeof AuthenticatedCreatorsCreatorIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/collaborations': typeof AuthenticatedCollaborationsRoute
+  '/explore': typeof AuthenticatedExploreRoute
+  '/feed': typeof AuthenticatedFeedRoute
+  '/match': typeof AuthenticatedMatchRoute
+  '/requests': typeof AuthenticatedRequestsRoute
+  '/creators/$creatorId': typeof AuthenticatedCreatorsCreatorIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated/collaborations': typeof AuthenticatedCollaborationsRoute
+  '/_authenticated/explore': typeof AuthenticatedExploreRoute
+  '/_authenticated/feed': typeof AuthenticatedFeedRoute
+  '/_authenticated/match': typeof AuthenticatedMatchRoute
+  '/_authenticated/requests': typeof AuthenticatedRequestsRoute
+  '/_authenticated/creators/$creatorId': typeof AuthenticatedCreatorsCreatorIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/collaborations'
+    | '/explore'
+    | '/feed'
+    | '/match'
+    | '/requests'
+    | '/creators/$creatorId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/collaborations'
+    | '/explore'
+    | '/feed'
+    | '/match'
+    | '/requests'
+    | '/creators/$creatorId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated/collaborations'
+    | '/_authenticated/explore'
+    | '/_authenticated/feed'
+    | '/_authenticated/match'
+    | '/_authenticated/requests'
+    | '/_authenticated/creators/$creatorId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedCollaborationsRoute: typeof AuthenticatedCollaborationsRoute
+  AuthenticatedExploreRoute: typeof AuthenticatedExploreRoute
+  AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
+  AuthenticatedMatchRoute: typeof AuthenticatedMatchRoute
+  AuthenticatedRequestsRoute: typeof AuthenticatedRequestsRoute
+  AuthenticatedCreatorsCreatorIdRoute: typeof AuthenticatedCreatorsCreatorIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +132,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/collaborations': {
+      id: '/_authenticated/collaborations'
+      path: '/collaborations'
+      fullPath: '/collaborations'
+      preLoaderRoute: typeof AuthenticatedCollaborationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/explore': {
+      id: '/_authenticated/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof AuthenticatedExploreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/feed': {
+      id: '/_authenticated/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof AuthenticatedFeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/match': {
+      id: '/_authenticated/match'
+      path: '/match'
+      fullPath: '/match'
+      preLoaderRoute: typeof AuthenticatedMatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/requests': {
+      id: '/_authenticated/requests'
+      path: '/requests'
+      fullPath: '/requests'
+      preLoaderRoute: typeof AuthenticatedRequestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/creators/$creatorId': {
+      id: '/_authenticated/creators/$creatorId'
+      path: '/creators/$creatorId'
+      fullPath: '/creators/$creatorId'
+      preLoaderRoute: typeof AuthenticatedCreatorsCreatorIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedCollaborationsRoute: AuthenticatedCollaborationsRoute,
+  AuthenticatedExploreRoute: AuthenticatedExploreRoute,
+  AuthenticatedFeedRoute: AuthenticatedFeedRoute,
+  AuthenticatedMatchRoute: AuthenticatedMatchRoute,
+  AuthenticatedRequestsRoute: AuthenticatedRequestsRoute,
+  AuthenticatedCreatorsCreatorIdRoute: AuthenticatedCreatorsCreatorIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

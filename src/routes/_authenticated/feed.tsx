@@ -8,20 +8,20 @@ import { GENRE_KEYS, GENRES, genreStyle } from "@/lib/genres";
 import { briefFromProfile, rankMatches } from "@/lib/matchmaking";
 import { useStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
-import { DemoBadge, fadeUp, stagger } from "@/components/motion";
+import { fadeUp, stagger } from "@/components/motion";
 import { CreatorCard } from "@/components/creator/CreatorCard";
 import { AvailabilityBadge, CategoryLabel, ConnectButton, CreatorAvatar, GenreChip } from "@/components/creator/bits";
 import { MatchCard } from "@/components/match/MatchCard";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/_authenticated/feed")({
   head: () => ({
     meta: [
-      { title: "Discover creators — Ensemble" },
+      { title: "Discover creators — Crea-Link" },
       {
         name: "description",
         content: "Discover storytellers, animators, music producers and content creators, and find your next creative partner.",
       },
-      { property: "og:title", content: "Discover creators — Ensemble" },
+      { property: "og:title", content: "Discover creators — Crea-Link" },
       {
         property: "og:description",
         content: "Discover storytellers, animators, music producers and content creators, and find your next creative partner.",
@@ -214,7 +214,6 @@ function MatchTeaser() {
             <span className="match-shimmer flex size-8 items-center justify-center rounded-xl">
               <Sparkles className="size-4 text-match-ink" />
             </span>
-            <DemoBadge label="Demo matching" />
           </div>
           <h2 className="mt-4 font-display text-4xl text-foreground md:text-5xl">
             Matched to <span className="match-gradient-text italic">your story</span>

@@ -4,14 +4,14 @@ import { ME_ID } from "@/data/creators";
 import { useStore, type RequestStatus } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { PageHeader, DemoBadge } from "@/components/motion";
+import { PageHeader } from "@/components/motion";
 import { RequestCard } from "@/components/requests/RequestCard";
 
 type Tab = "received" | "sent";
 type StatusFilter = RequestStatus | "all";
 type RequestsSearch = { tab?: Tab | undefined; status?: StatusFilter | undefined };
 
-export const Route = createFileRoute("/requests")({
+export const Route = createFileRoute("/_authenticated/_authenticated/requests")({
   validateSearch: (s: Record<string, unknown>): RequestsSearch => ({
     tab: s["tab"] === "sent" || s["tab"] === "received" ? s["tab"] : undefined,
     status: ["pending", "accepted", "declined", "all"].includes(s["status"] as string)
@@ -20,9 +20,9 @@ export const Route = createFileRoute("/requests")({
   }),
   head: () => ({
     meta: [
-      { title: "Collaboration requests — Ensemble" },
+      { title: "Collaboration requests — Crea-Link" },
       { name: "description", content: "Review, accept or decline collaboration requests and track the ones you've sent." },
-      { property: "og:title", content: "Collaboration requests — Ensemble" },
+      { property: "og:title", content: "Collaboration requests — Crea-Link" },
       { property: "og:description", content: "Review, accept or decline collaboration requests and track the ones you've sent." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -86,7 +86,6 @@ function RequestsPage() {
         title="Invitations, both ways."
         description="Accept the projects that light you up. Everything you send lives under Sent."
       >
-        <DemoBadge />
       </PageHeader>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

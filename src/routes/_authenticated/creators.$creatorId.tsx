@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ConnectButton } from "@/components/creator/bits";
 import { ProfileView } from "@/components/creator/ProfileView";
 
-export const Route = createFileRoute("/creators/$creatorId")({
+export const Route = createFileRoute("/_authenticated/_authenticated/creators/$creatorId")({
   loader: ({ params }) => {
     const creator = findCreator(params.creatorId);
     if (!creator) throw notFound();
@@ -16,8 +16,8 @@ export const Route = createFileRoute("/creators/$creatorId")({
   },
   head: ({ loaderData }) => {
     const c = loaderData?.creator;
-    if (!c) return { meta: [{ title: "Creator not found — Ensemble" }, { name: "robots", content: "noindex" }] };
-    const title = `${c.name}, ${CATEGORIES[c.category].label} — Ensemble`;
+    if (!c) return { meta: [{ title: "Creator not found — Crea-Link" }, { name: "robots", content: "noindex" }] };
+    const title = `${c.name}, ${CATEGORIES[c.category].label} — Crea-Link`;
     return {
       meta: [
         { title },

@@ -17,15 +17,15 @@ import { briefFromProfile, rankMatches, type MatchBrief } from "@/lib/matchmakin
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { DemoBadge, PageHeader } from "@/components/motion";
+import { PageHeader } from "@/components/motion";
 import { MatchCard } from "@/components/match/MatchCard";
 
-export const Route = createFileRoute("/match")({
+export const Route = createFileRoute("/_authenticated/_authenticated/match")({
   head: () => ({
     meta: [
-      { title: "Creative matchmaking — Ensemble" },
+      { title: "Creative matchmaking — Crea-Link" },
       { name: "description", content: "Describe your project and see collaborators ranked by genre, skills, experience and preferences." },
-      { property: "og:title", content: "Creative matchmaking — Ensemble" },
+      { property: "og:title", content: "Creative matchmaking — Crea-Link" },
       { property: "og:description", content: "Describe your project and see collaborators ranked by genre, skills, experience and preferences." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -126,7 +126,6 @@ function MatchPage() {
         }
         description="Describe your project and we'll rank compatible creators by genre, interests, skills, experience and how they like to work."
       >
-        <DemoBadge label="Demo · rule-based, not live AI" />
       </PageHeader>
 
       <div className="grid gap-6 lg:grid-cols-[360px_1fr]">

@@ -30,7 +30,7 @@ type ExploreSearch = {
 const pick = <T extends string>(v: unknown, list: readonly T[]) =>
   typeof v === "string" && (list as readonly string[]).includes(v) ? (v as T) : undefined;
 
-export const Route = createFileRoute("/explore")({
+export const Route = createFileRoute("/_authenticated/_authenticated/explore")({
   validateSearch: (s: Record<string, unknown>): ExploreSearch => ({
     q: typeof s["q"] === "string" && s["q"] ? s["q"] : undefined,
     category: pick(s["category"], CATEGORY_KEYS),
@@ -40,9 +40,9 @@ export const Route = createFileRoute("/explore")({
   }),
   head: () => ({
     meta: [
-      { title: "Explore creators — Ensemble" },
+      { title: "Explore creators — Crea-Link" },
       { name: "description", content: "Search and filter creators by name, genre, skills, experience, craft and availability." },
-      { property: "og:title", content: "Explore creators — Ensemble" },
+      { property: "og:title", content: "Explore creators — Crea-Link" },
       { property: "og:description", content: "Search and filter creators by name, genre, skills, experience, craft and availability." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
