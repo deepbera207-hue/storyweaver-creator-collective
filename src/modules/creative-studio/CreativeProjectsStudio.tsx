@@ -25,7 +25,7 @@ import { getGenreTheme, getThemeCssVars } from './theme/genreThemes';
 import { studioService as firestoreStudio } from './services/studioService';
 import { StudioProjectCard } from './components/StudioProjectCard';
 import { CreateProjectModal } from './components/CreateProjectModal';
-import { ProjectWorkspace } from './components/ProjectWorkspace';
+import { ProjectWorkspace, type WorkspaceTabId } from './components/ProjectWorkspace';
 import { JoinByInviteModal } from './components/JoinByInviteModal';
 import { PeopleConnectionsSection } from './components/PeopleConnectionsSection';
 import { StudioAvatar } from './components/StudioAvatar';
