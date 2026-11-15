@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { BookMarked, RotateCcw, Sparkles } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 import { AssistanceTools } from './components/AssistanceTools';
 import { GenreSelector } from './components/GenreSelector';
 import { RecreatedStoryStudio } from './components/RecreatedStoryStudio';
@@ -29,14 +30,16 @@ import {
 } from './types';
 
 export function StoryAssistantPage({
-  apiEndpoint = '/api/story-assistant',
   initialTitle = '',
+  initialGenreId = 'calm',
+  projectContext,
+  embedded = false,
   initialStory = '',
   onDraftChange,
   onSaveSuggestion,
   storageKey = 'creative_platform_story_assistant_v2',
 }: StoryAssistantPageProps) {
-  const [genreId, setGenreId] = useState<GenreId>('calm');
+  const [genreId, setGenreId] = useState<GenreId>(initialGenreId);
   const [toolId, setToolId] = useState<AssistantToolId>('idea');
 
   const [storyTitle, setStoryTitle] = useState(initialTitle);
@@ -67,7 +70,6 @@ export function StoryAssistantPage({
   const [mergedResult, setMergedResult] =
     useState<RecreatedStoryResult | null>(null);
 
-  const [serverLiveReady, setServerLiveReady] = useState<boolean | null>(null);
   const noticeTimerRef = useRef<number | null>(null);
 
   const activeTheme = GENRE_THEMES[genreId];
@@ -75,24 +77,6 @@ export function StoryAssistantPage({
     () => ASSISTANCE_TOOLS.find((t) => t.id === toolId) || ASSISTANCE_TOOLS[0],
     [toolId]
   );
-
-  // Check if backend AI route has a configured Gemini key (no secrets exposed)
-  useEffect(() => {
-    let active = true;
-    fetch('/api/health')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (active && data && typeof data.aiConfigured === 'boolean') {
-          setServerLiveReady(data.aiConfigured);
-        }
-      })
-      .catch(() => {
-        if (active) setServerLiveReady(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
 
   // Hydrate saved notes & sessions safely
   useEffect(() => {
@@ -179,8 +163,8 @@ export function StoryAssistantPage({
           generationRound: roundToUse,
           seenTitles,
           rejectedTitles,
-        },
-        apiEndpoint
+          projectContext,
+        }
       );
       setResponse(result);
       setGenerationRound(roundToUse + 1);
@@ -191,6 +175,8 @@ export function StoryAssistantPage({
         ]);
         return Array.from(merged).slice(-40);
       });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'The AI assistant could not respond.');
     } finally {
       setIsLoading(false);
     }
@@ -316,8 +302,8 @@ export function StoryAssistantPage({
           toolId,
           suggestion,
           editInstruction,
-        },
-        apiEndpoint
+          projectContext,
+        }
       );
 
       setResponse((prev) =>
@@ -331,6 +317,8 @@ export function StoryAssistantPage({
           : null
       );
       showNotice(`Rewrote "${suggestion.title}" using your feedback.`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not revise that suggestion.');
     } finally {
       setRevisingId(null);
     }
@@ -348,10 +336,12 @@ export function StoryAssistantPage({
           genreId,
           format: recreateFormat,
           acceptedSuggestions: savedSuggestions,
-        },
-        apiEndpoint
+          projectContext,
+        }
       );
       setMergedResult(result);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Could not recreate the story.');
     } finally {
       setIsMerging(false);
     }
@@ -403,18 +393,12 @@ export function StoryAssistantPage({
     persistWorkspace(nextSaved, sessions);
   };
 
-  const activeModeLabel =
-    response?.mode === 'live' || serverLiveReady === true
-      ? 'Live Gemini AI Connected'
-      : 'Demonstration Mode (No Key Required)';
+  const activeModeLabel = projectContext ? 'Live AI · using this project\'s context' : 'Live AI creative partner';
 
   return (
     <div
-      className="relative min-h-screen bg-white text-slate-900 overflow-x-hidden transition-colors duration-500"
-      style={{
-        ...(activeTheme.cssVars as React.CSSProperties),
-        fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif",
-      }}
+      className={`relative ${embedded ? 'rounded-3xl' : 'min-h-screen rounded-[2rem]'} bg-white text-slate-900 overflow-hidden transition-colors duration-500`}
+      style={activeTheme.cssVars as React.CSSProperties}
     >
       {/* Gentle frosted-glass pastel ambient wash & animated orbs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
@@ -439,7 +423,7 @@ export function StoryAssistantPage({
         />
       </div>
 
-      <main className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-6">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-6">
         {/* 1. Editorial Header */}
         <header className="flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-2xl">
@@ -451,11 +435,8 @@ export function StoryAssistantPage({
               <span>Creative Writing Studio</span>
             </div>
             <h1
-              className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900"
-              style={{
-                fontFamily: "'Fraunces', Georgia, serif",
-                textWrap: 'balance',
-              }}
+              className="font-display text-4xl sm:text-5xl font-normal tracking-tight text-slate-900"
+              style={{ textWrap: 'balance' }}
             >
               AI Story Assistant
             </h1>
@@ -494,7 +475,7 @@ export function StoryAssistantPage({
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2
                 className="text-base font-semibold tracking-tight text-slate-900"
-                style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+                
               >
                 2. Your Story Draft
               </h2>
@@ -644,7 +625,7 @@ export function StoryAssistantPage({
           onMerge={() => void handleMergeStory()}
           onApplyToDraft={handleApplyMergedToDraft}
         />
-      </main>
+      </div>
     </div>
   );
 }
