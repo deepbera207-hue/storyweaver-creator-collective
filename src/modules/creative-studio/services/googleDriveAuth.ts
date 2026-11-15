@@ -1,86 +1,79 @@
-import {
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  reauthenticateWithPopup,
-  signInWithPopup,
-  type User,
-} from 'firebase/auth';
-import { auth, formatFirebaseAuthError } from './firebaseClient';
-
+/**
+ * Google Drive access for importing files into Crea-Link projects.
+ *
+ * The original module obtained Drive tokens through Firebase Google sign-in.
+ * Crea-Link now uses a single Lovable Cloud account, so Drive access is
+ * requested separately with Google Identity Services. This requires a Google
+ * OAuth Web Client ID in VITE_GOOGLE_DRIVE_CLIENT_ID (a public identifier).
+ * Without it, Drive import shows a clear "not configured" message.
+ */
 export const GOOGLE_DRIVE_SCOPES = [
   'https://www.googleapis.com/auth/drive.readonly',
-  'https://www.googleapis.com/auth/drive.file',
 ] as const;
 
-const driveProvider = new GoogleAuthProvider();
-for (const scope of GOOGLE_DRIVE_SCOPES) {
-  driveProvider.addScope(scope);
-}
-driveProvider.setCustomParameters({
-  prompt: 'consent select_account',
-});
+type TokenClient = { requestAccessToken: (o?: { prompt?: string }) => void };
+type GoogleOAuth = {
+  accounts: {
+    oauth2: {
+      initTokenClient: (cfg: {
+        client_id: string;
+        scope: string;
+        callback: (r: { access_token?: string; error?: string; error_description?: string }) => void;
+        error_callback?: (e: { message?: string }) => void;
+      }) => TokenClient;
+    };
+  };
+};
 
-let isSigningIn = false;
-// In-memory cache only (never stored in localStorage or sessionStorage)
 let cachedAccessToken: string | null = null;
 
-export const initAuth = (
-  onAuthSuccess?: (user: User, token: string) => void,
-  onAuthFailure?: (user: User | null) => void
-) => {
-  return onAuthStateChanged(auth, (user: User | null) => {
-    if (user) {
-      if (cachedAccessToken) {
-        onAuthSuccess?.(user, cachedAccessToken);
-      } else if (!isSigningIn) {
-        cachedAccessToken = null;
-        onAuthFailure?.(user);
-      }
-    } else {
-      cachedAccessToken = null;
-      onAuthFailure?.(null);
-    }
+export function isDriveConfigured(): boolean {
+  return Boolean(import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID);
+}
+
+function loadGis(): Promise<GoogleOAuth> {
+  const w = window as unknown as { google?: GoogleOAuth };
+  if (w.google?.accounts?.oauth2) return Promise.resolve(w.google);
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.async = true;
+    s.onload = () => (w.google ? resolve(w.google) : reject(new Error('Google sign-in failed to load.')));
+    s.onerror = () => reject(new Error('Google sign-in failed to load.'));
+    document.head.appendChild(s);
   });
-};
+}
 
-export const googleSignIn = async (): Promise<{ user: User; accessToken: string }> => {
-  try {
-    isSigningIn = true;
-    const result = auth.currentUser
-      ? await reauthenticateWithPopup(auth.currentUser, driveProvider).catch(async (err) => {
-          const code = typeof err === 'object' && err !== null && 'code' in err ? String(err.code) : '';
-          if (code === 'auth/user-mismatch') {
-            return signInWithPopup(auth, driveProvider);
-          }
-          throw err;
-        })
-      : await signInWithPopup(auth, driveProvider);
-
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    if (!credential?.accessToken) {
-      throw new Error('Could not obtain a Google Drive access token. Please allow Google Drive permissions and try again.');
-    }
-    cachedAccessToken = credential.accessToken;
-    return { user: result.user, accessToken: cachedAccessToken };
-  } catch (err) {
-    throw new Error(formatFirebaseAuthError(err));
-  } finally {
-    isSigningIn = false;
+export const googleSignIn = async (): Promise<{ user: null; accessToken: string }> => {
+  const clientId = import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID as string | undefined;
+  if (!clientId) {
+    throw new Error(
+      'Google Drive import is not configured yet. Upload files from your device instead, or ask the app owner to add a Google Drive client ID.'
+    );
   }
+  const google = await loadGis();
+  const token = await new Promise<string>((resolve, reject) => {
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: GOOGLE_DRIVE_SCOPES.join(' '),
+      callback: (r) => (r.access_token ? resolve(r.access_token) : reject(new Error(r.error_description || 'Google Drive access was not granted.'))),
+      error_callback: (e) => reject(new Error(e.message || 'Google Drive access was cancelled.')),
+    });
+    client.requestAccessToken({ prompt: 'consent' });
+  });
+  cachedAccessToken = token;
+  return { user: null, accessToken: token };
 };
 
-export const getAccessToken = async (): Promise<string | null> => {
-  return cachedAccessToken;
-};
-
-export const getCurrentGoogleUser = (): User | null => {
-  return auth.currentUser;
-};
-
+export const getAccessToken = async (): Promise<string | null> => cachedAccessToken;
+export const getCurrentGoogleUser = (): null => null;
 export const clearCachedAccessToken = (): void => {
   cachedAccessToken = null;
 };
-
 export const logoutGoogleDrive = async (): Promise<void> => {
   cachedAccessToken = null;
+};
+export const initAuth = (_ok?: unknown, onFailure?: (u: null) => void) => {
+  if (!cachedAccessToken) onFailure?.(null);
+  return () => {};
 };
