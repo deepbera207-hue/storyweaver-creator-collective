@@ -1,6 +1,9 @@
 {
-  "name": "tanstack_start_ts",
+  "name": "crea-link",
+  "productName": "Crea-Link",
   "private": true,
+  "version": "1.0.0",
+  "main": "electron/main.cjs",
   "sideEffects": false,
   "type": "module",
   "scripts": {
@@ -8,6 +11,7 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
+    "desktop": "electron .",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run",
