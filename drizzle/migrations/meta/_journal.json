@@ -15,6 +15,13 @@
       "when": 1794764961574,
       "tag": "0001_single_use_invites",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794768585030,
+      "tag": "0002_tighten_profile_visibility",
+      "breakpoints": true
     }
   ]
 }
