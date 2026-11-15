@@ -48,6 +48,8 @@ export interface CreativeProjectsStudioProps {
   /** Heading shown above the dashboard */
   heading?: string;
   subheading?: string;
+  /** Workspace tab to show first when a project is opened */
+  initialTab?: WorkspaceTabId;
 }
 
 export function CreativeProjectsStudio({
@@ -58,6 +60,7 @@ export function CreativeProjectsStudio({
   onOpenProject,
   onCloseProject,
   heading = 'Creative Projects',
+  initialTab,
   subheading = 'Launch original stories, films, animations and audio productions. Find open roles, join teams with invite codes, and showcase finished work.',
 }: CreativeProjectsStudioProps) {
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
@@ -279,6 +282,7 @@ export function CreativeProjectsStudio({
             allCreators={creators}
             onBack={() => setActiveProjectId(null)}
             onProjectDeleted={handleProjectDeleted}
+            initialTab={initialTab}
           />
         ) : (
           <div
