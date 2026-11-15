@@ -38,8 +38,10 @@ export function ProfileView({ creator, actions }: { creator: Creator; actions: R
                 <span className="inline-flex items-center gap-1.5">
                   <MapPin className="size-3.5" /> {creator.location}
                 </span>
+                {creator.username && <span>@{creator.username}</span>}
                 <span>
-                  {creator.experience} · {creator.years} years
+                  {creator.experience}
+                  {creator.years ? ` · ${creator.years} years` : ""}
                 </span>
                 <AvailabilityBadge value={creator.availability} className="text-sm" />
               </div>
@@ -51,10 +53,13 @@ export function ProfileView({ creator, actions }: { creator: Creator; actions: R
         <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
           <div className="space-y-6">
             <Block title="About">
-              <p className="text-[15px] leading-relaxed text-foreground">{creator.bio}</p>
+              <p className="text-[15px] leading-relaxed text-foreground">{creator.bio || "This creator hasn't written a bio yet."}</p>
             </Block>
 
-            <Block title="Portfolio">
+            <Block title="Projects & work">
+              {creator.portfolio.length === 0 && (
+                <p className="text-sm text-muted-foreground">No shared projects yet.</p>
+              )}
               <div className="grid gap-4 sm:grid-cols-2">
                 {creator.portfolio.map((p) => (
                   <motion.button
@@ -75,7 +80,8 @@ export function ProfileView({ creator, actions }: { creator: Creator; actions: R
               </div>
             </Block>
 
-            <Block title="Previous projects">
+            <Block title="Project history">
+              {creator.projects.length === 0 && <p className="text-sm text-muted-foreground">Nothing here yet.</p>}
               <ol className="relative space-y-6 border-l border-g-accent/50 pl-6">
                 {creator.projects.map((p) => (
                   <li key={p.title} className="relative">
@@ -130,11 +136,11 @@ export function ProfileView({ creator, actions }: { creator: Creator; actions: R
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-muted-foreground">Prefers</dt>
-                  <dd className="text-right">{creator.collabPrefs.join(", ")}</dd>
+                  <dd className="text-right">{creator.collabPrefs.join(", ") || "—"}</dd>
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-muted-foreground">Looking for</dt>
-                  <dd className="text-right">{creator.lookingFor.map((c) => CATEGORIES[c].plural).join(", ")}</dd>
+                  <dd className="text-right">{creator.lookingFor.map((c) => CATEGORIES[c]?.plural).filter(Boolean).join(", ") || "—"}</dd>
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-muted-foreground">Focus</dt>
