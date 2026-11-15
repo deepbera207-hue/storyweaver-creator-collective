@@ -152,7 +152,7 @@ export function RequestDialog({ creator, children }: { creator: Creator; childre
             <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
               <X /> Cancel
             </Button>
-            <Button type="submit">Send request</Button>
+            <Button type="submit" disabled={sending}>{sending ? "Sending…" : "Send request"}</Button>
           </div>
         </form>
       </DialogContent>
