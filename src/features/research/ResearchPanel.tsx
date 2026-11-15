@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, ClipboardCheck, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -111,7 +111,7 @@ export function ResearchPanel({ storyContext, compact = false }: { storyContext?
 
   // The button is a real link (opens a normal new tab, like the original page).
   // The click only adds the clipboard copy for AI platforms.
-  function handleResearchClick(e: React.MouseEvent<HTMLAnchorElement>) {
+  function handleResearchClick(e: MouseEvent<HTMLAnchorElement>) {
     setFallback(null);
     if (!q) {
       e.preventDefault();
