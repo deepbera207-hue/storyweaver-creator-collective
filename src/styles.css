@@ -304,3 +304,37 @@
   0%, 100% { transform: scale(0.9); opacity: 0.75; }
   50% { transform: scale(1.06); opacity: 1; }
 }
+
+@utility auth-input {
+  height: 2.75rem;
+  width: 100%;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: var(--background);
+  padding: 0 1.1rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+  &:focus {
+    border-color: var(--ring);
+    background: var(--card);
+    box-shadow: var(--shadow-soft);
+  }
+}
+
+/* Google sign-in button — light theme per Google branding guidelines */
+:root {
+  --google-btn-bg: oklch(1 0 0);
+  --google-btn-border: oklch(0.54 0.005 150);
+  --google-btn-text: oklch(0.24 0 0);
+}
+@utility google-btn {
+  background: var(--google-btn-bg);
+  border: 1px solid var(--google-btn-border);
+  color: var(--google-btn-text);
+  font-family: "Google Sans", var(--font-sans);
+  transition: box-shadow 0.2s;
+  &:hover {
+    box-shadow: var(--shadow-soft);
+  }
+}

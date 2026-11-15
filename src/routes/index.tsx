@@ -84,9 +84,15 @@ function Landing() {
               </motion.p>
               <motion.div variants={fadeUp} className="mt-9 flex flex-wrap gap-3">
                 <Button asChild size="lg">
-                  <Link to={signedIn ? "/feed" : "/auth"} search={signedIn ? undefined : { mode: "signup" }}>
-                    {signedIn ? "Go to my feed" : "Create your profile"} <ArrowRight />
-                  </Link>
+                  {signedIn ? (
+                    <Link to="/feed">
+                      Go to my feed <ArrowRight />
+                    </Link>
+                  ) : (
+                    <Link to="/auth" search={{ mode: "signup" }}>
+                      Create your profile <ArrowRight />
+                    </Link>
+                  )}
                 </Button>
                 {!signedIn && (
                   <Button asChild size="lg" variant="glass">
@@ -198,9 +204,15 @@ function Landing() {
         <section className="text-center">
           <h2 className="font-display text-5xl text-foreground">Ready to create together?</h2>
           <Button asChild size="lg" className="mt-8">
-            <Link to={signedIn ? "/feed" : "/auth"} search={signedIn ? undefined : { mode: "signup" }}>
-              {signedIn ? "Open Crea-Link" : "Join Crea-Link"} <ArrowRight />
-            </Link>
+            {signedIn ? (
+              <Link to="/feed">
+                Open Crea-Link <ArrowRight />
+              </Link>
+            ) : (
+              <Link to="/auth" search={{ mode: "signup" }}>
+                Join Crea-Link <ArrowRight />
+              </Link>
+            )}
           </Button>
         </section>
       </main>
