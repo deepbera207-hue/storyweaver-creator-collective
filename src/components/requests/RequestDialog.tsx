@@ -14,13 +14,15 @@ import { Textarea } from "@/components/ui/textarea";
 
 export function RequestDialog({ creator, children }: { creator: Creator; children: ReactNode }) {
   const { me, sendRequest } = useStore();
-  const shared = creator.genres.find((g) => me.genres.includes(g));
+  const myGenres = me?.genres ?? [];
+  const shared = creator.genres.find((g) => myGenres.includes(g));
+  const [sending, setSending] = useState(false);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [custom, setCustom] = useState("");
-  const [genre, setGenre] = useState<GenreKey>(shared ?? me.genres[0] ?? creator.genres[0] ?? "romance");
+  const [genre, setGenre] = useState<GenreKey>(shared ?? myGenres[0] ?? creator.genres[0] ?? "romance");
   const [errors, setErrors] = useState<{ title?: string; description?: string }>({});
 
   const reset = () => {
@@ -39,20 +41,28 @@ export function RequestDialog({ creator, children }: { creator: Creator; childre
     setCustom("");
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const next: typeof errors = {};
     if (title.trim().length < 3) next.title = "Give your project a title (at least 3 characters).";
     if (description.trim().length < 20) next.description = "Describe the project in a sentence or two (20+ characters).";
     setErrors(next);
     if (Object.keys(next).length) return;
-    sendRequest({
-      toId: creator.id,
-      projectTitle: title.trim(),
-      description: description.trim(),
-      skills,
-      genre,
-    });
+    setSending(true);
+    try {
+      await sendRequest({
+        toId: creator.id,
+        projectTitle: title.trim(),
+        description: description.trim(),
+        skills,
+        genre,
+      });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not send the request");
+      setSending(false);
+      return;
+    }
+    setSending(false);
     toast.success(`Request sent to ${creator.name}`, { description: "You'll find it under Collaboration Requests → Sent." });
     setOpen(false);
     reset();

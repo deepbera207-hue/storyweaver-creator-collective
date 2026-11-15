@@ -11,6 +11,7 @@ import { RequestDialog } from "@/components/requests/RequestDialog";
 export function initials(name: string) {
   return name
     .split(" ")
+    .filter(Boolean)
     .map((p) => p[0])
     .slice(0, 2)
     .join("")
@@ -22,16 +23,20 @@ export function CreatorAvatar({
   size = "md",
   className,
 }: {
-  creator: Pick<Creator, "name" | "genres">;
+  creator: Pick<Creator, "name" | "genres"> & { avatarUrl?: string };
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
 }) {
   const dims = { sm: "size-8 text-sm", md: "size-11 text-base", lg: "size-16 text-2xl", xl: "size-28 text-5xl" }[size];
   return (
     <div style={genreStyle(creator.genres)} className={cn("genre-ring shrink-0 rounded-full p-[2px]", className)}>
-      <div className={cn("flex items-center justify-center rounded-full bg-card font-display text-g-ink", dims)}>
-        {initials(creator.name)}
-      </div>
+      {creator.avatarUrl ? (
+        <img src={creator.avatarUrl} alt={creator.name} className={cn("rounded-full bg-card object-cover", dims)} />
+      ) : (
+        <div className={cn("flex items-center justify-center rounded-full bg-card font-display text-g-ink", dims)}>
+          {initials(creator.name)}
+        </div>
+      )}
     </div>
   );
 }

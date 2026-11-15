@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { Check, Clock, Undo2, X } from "lucide-react";
 import { toast } from "sonner";
-import { ME_ID } from "@/data/creators";
 import { genreStyle } from "@/lib/genres";
 import { useStore, type CollabRequest, type RequestStatus } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -31,8 +30,8 @@ export function StatusBadge({ status }: { status: RequestStatus }) {
 }
 
 export function RequestCard({ request }: { request: CollabRequest }) {
-  const { getPerson, respond, withdraw } = useStore();
-  const incoming = request.toId === ME_ID;
+  const { getPerson, respond, withdraw, user } = useStore();
+  const incoming = request.toId === user?.id;
   const other = getPerson(incoming ? request.fromId : request.toId);
   if (!other) return null;
 
@@ -75,8 +74,9 @@ export function RequestCard({ request }: { request: CollabRequest }) {
               <Button
                 size="sm"
                 onClick={() => {
-                  respond(request.id, "accepted");
-                  toast.success(`You're now collaborating with ${other.name}`);
+                  respond(request.id, "accepted")
+                    .then(() => toast.success(`You're now collaborating with ${other.name}`))
+                    .catch((e: Error) => toast.error(e.message));
                 }}
               >
                 <Check /> Accept
@@ -85,7 +85,7 @@ export function RequestCard({ request }: { request: CollabRequest }) {
                 size="sm"
                 variant="outline"
                 onClick={() => {
-                  respond(request.id, "declined");
+                  void respond(request.id, "declined").catch((e: Error) => toast.error(e.message));
                   toast(`Declined ${other.name.split(" ")[0]}'s request`, {
                     action: { label: "Undo", onClick: () => respond(request.id, "pending") },
                   });
@@ -100,8 +100,9 @@ export function RequestCard({ request }: { request: CollabRequest }) {
               size="sm"
               variant="ghost"
               onClick={() => {
-                withdraw(request.id);
-                toast("Request withdrawn");
+                withdraw(request.id)
+                  .then(() => toast("Request withdrawn"))
+                  .catch((e: Error) => toast.error(e.message));
               }}
             >
               <Undo2 /> Withdraw
