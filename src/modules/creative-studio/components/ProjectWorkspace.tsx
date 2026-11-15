@@ -41,7 +41,7 @@ interface ProjectWorkspaceProps {
   currentUser: UserProfile;
   allCreators: UserProfile[];
   onBack: () => void;
-  onProjectUpdate?: (updated: CreativeProject) => void | undefined;
+  onProjectUpdate?: ((updated: CreativeProject) => void) | undefined;
   onProjectDeleted: (projectId: string) => void;
   initialTab?: WorkspaceTabId | undefined;
 }

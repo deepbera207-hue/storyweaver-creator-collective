@@ -26,7 +26,7 @@ interface PortfolioTabProps {
   project: CreativeProject;
   currentUser: UserProfile;
   theme: GenreThemeTokens;
-  onProjectUpdate?: (updated: CreativeProject) => void | undefined;
+  onProjectUpdate?: ((updated: CreativeProject) => void) | undefined;
 }
 
 const PORTFOLIO_TYPES: PortfolioMediaType[] = [

@@ -139,9 +139,9 @@ export interface StoryAssistantPageProps {
   /** Optional initial draft text when embedded in an existing platform */
   initialStory?: string | undefined;
   /** Optional callback when the user updates their draft or applies recreated text */
-  onDraftChange?: (title: string, content: string) => void | undefined;
+  onDraftChange?: ((title: string, content: string) => void) | undefined;
   /** Optional callback when a suggestion is accepted into notes */
-  onSaveSuggestion?: (suggestion: StorySuggestion) => void | undefined;
+  onSaveSuggestion?: ((suggestion: StorySuggestion) => void) | undefined;
   /** Optional localStorage namespace key to avoid collisions across projects */
   storageKey?: string | undefined;
   /** Initial story mood (derived from a project's primary genre) */

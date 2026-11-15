@@ -43,8 +43,8 @@ export interface CreativeProjectsStudioProps {
   /** Show only projects the user owns or belongs to (Collaborative Studio view) */
   onlyMine?: boolean | undefined;
   /** Router-aware navigation hooks */
-  onOpenProject?: (projectId: string) => void | undefined;
-  onCloseProject?: () => void | undefined;
+  onOpenProject?: ((projectId: string) => void) | undefined;
+  onCloseProject?: (() => void) | undefined;
   /** Heading shown above the dashboard */
   heading?: string | undefined;
   subheading?: string | undefined;
