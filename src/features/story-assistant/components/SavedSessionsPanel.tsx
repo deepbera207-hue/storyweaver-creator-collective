@@ -30,7 +30,7 @@ export function SavedSessionsPanel({
       <div className="flex flex-wrap items-baseline justify-between gap-2 mb-4">
         <h2
           className="text-base font-semibold tracking-tight text-slate-900"
-          style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+          style={{ fontFamily: 'var(--font-display)' }}
         >
           5. Saved Suggestions &amp; Previous Sessions
         </h2>

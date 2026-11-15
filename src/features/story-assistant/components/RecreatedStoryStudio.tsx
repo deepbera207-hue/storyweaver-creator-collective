@@ -88,7 +88,7 @@ export function RecreatedStoryStudio({
         <div>
           <h2
             className="text-base font-semibold tracking-tight text-slate-900 flex items-center gap-2"
-            style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+            style={{ fontFamily: 'var(--font-display)' }}
           >
             <BookOpen className="w-4 h-4" style={{ color: 'var(--sa-accent)' }} />
             <span>6. Recreated Story / Script Reader</span>
@@ -211,7 +211,7 @@ export function RecreatedStoryStudio({
               </span>
               <span aria-hidden="true">·</span>
               <span>
-                {mergedResult.mode === 'demo' ? 'Demonstration Mode' : 'Live Gemini AI'}
+                {mergedResult.mode === 'demo' ? 'Demonstration Mode' : 'Live AI'}
               </span>
             </div>
 
@@ -259,7 +259,7 @@ export function RecreatedStoryStudio({
               fontFamily:
                 mergedResult.format === 'script'
                   ? "'JetBrains Mono', ui-monospace, monospace"
-                  : "'Plus Jakarta Sans', sans-serif",
+                  : 'var(--font-sans)',
               fontSize: mergedResult.format === 'script' ? '0.88rem' : '0.98rem',
             }}
           >

@@ -86,7 +86,7 @@ export function AssistanceTools({
       <div className="flex items-baseline justify-between gap-2">
         <h2
           className="text-base font-semibold tracking-tight text-slate-900"
-          style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+          style={{ fontFamily: 'var(--font-display)' }}
         >
           3. AI Creative Partner
         </h2>

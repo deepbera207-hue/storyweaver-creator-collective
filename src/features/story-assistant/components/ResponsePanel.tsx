@@ -83,7 +83,7 @@ export function ResponsePanel({
         <div>
           <h2
             className="text-base font-semibold tracking-tight text-slate-900"
-            style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+            style={{ fontFamily: 'var(--font-display)' }}
           >
             4. Creative Suggestions
           </h2>
