@@ -17,7 +17,7 @@ import {
   initAuth,
   logoutGoogleDrive,
 } from '../services/googleDriveAuth';
-import { firestoreStudio } from '../services/firestoreStudio';
+import { studioService as firestoreStudio } from '../services/studioService';
 import { studioSignOut } from '../services/firebaseClient';
 
 interface CreatorProfileModalProps {

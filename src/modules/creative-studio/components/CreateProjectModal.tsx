@@ -12,7 +12,7 @@ import {
   type ScriptAccessLevel,
 } from '../types/studio';
 import { getGenreTheme } from '../theme/genreThemes';
-import { firestoreStudio } from '../services/firestoreStudio';
+import { studioService as firestoreStudio } from '../services/studioService';
 import type { UserProfile } from '../types/studio';
 
 interface CreateProjectModalProps {

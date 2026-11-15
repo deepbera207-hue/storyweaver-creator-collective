@@ -24,7 +24,7 @@ import {
 } from '../types/studio';
 import type { GenreThemeTokens } from '../theme/genreThemes';
 import { StudioAvatar } from './StudioAvatar';
-import { firestoreStudio } from '../services/firestoreStudio';
+import { studioService as firestoreStudio } from '../services/studioService';
 
 interface PeopleConnectionsSectionProps {
   currentUser: UserProfile;

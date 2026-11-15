@@ -34,7 +34,7 @@ import type {
   UserProfile,
 } from '../types/studio';
 import type { GenreThemeTokens } from '../theme/genreThemes';
-import { firestoreStudio } from '../services/firestoreStudio';
+import { studioService as firestoreStudio } from '../services/studioService';
 import { StudioAvatar } from './StudioAvatar';
 import { resolveStudioAsset } from '../assets/studioAssets';
 import { GoogleDriveModal } from './GoogleDriveModal';

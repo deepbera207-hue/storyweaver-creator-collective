@@ -14,7 +14,7 @@ import {
 } from '../types/studio';
 import type { GenreThemeTokens } from '../theme/genreThemes';
 import { STATUS_STYLES } from '../theme/genreThemes';
-import { firestoreStudio } from '../services/firestoreStudio';
+import { studioService as firestoreStudio } from '../services/studioService';
 
 interface ProjectOverviewTabProps {
   project: CreativeProject;

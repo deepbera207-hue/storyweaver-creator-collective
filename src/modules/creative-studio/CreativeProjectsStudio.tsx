@@ -32,7 +32,7 @@ import {
   subscribeAuthState,
   testFirestoreConnection,
 } from './services/firebaseClient';
-import { firestoreStudio } from './services/firestoreStudio';
+import { studioService as firestoreStudio } from './services/studioService';
 import { StudioProjectCard } from './components/StudioProjectCard';
 import { CreateProjectModal } from './components/CreateProjectModal';
 import { ProjectWorkspace } from './components/ProjectWorkspace';

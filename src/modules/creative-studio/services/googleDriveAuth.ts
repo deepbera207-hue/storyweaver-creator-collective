@@ -25,6 +25,8 @@ type GoogleOAuth = {
   };
 };
 
+type DriveUser = { email?: string; displayName?: string };
+const DRIVE_USER: DriveUser = { email: 'Google Drive connected', displayName: 'Google Drive' };
 let cachedAccessToken: string | null = null;
 
 export function isDriveConfigured(): boolean {
@@ -44,7 +46,7 @@ function loadGis(): Promise<GoogleOAuth> {
   });
 }
 
-export const googleSignIn = async (): Promise<{ user: null; accessToken: string }> => {
+export const googleSignIn = async (): Promise<{ user: DriveUser; accessToken: string }> => {
   const clientId = import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID as string | undefined;
   if (!clientId) {
     throw new Error(
@@ -62,18 +64,22 @@ export const googleSignIn = async (): Promise<{ user: null; accessToken: string 
     client.requestAccessToken({ prompt: 'consent' });
   });
   cachedAccessToken = token;
-  return { user: null, accessToken: token };
+  return { user: DRIVE_USER, accessToken: token };
 };
 
 export const getAccessToken = async (): Promise<string | null> => cachedAccessToken;
-export const getCurrentGoogleUser = (): null => null;
+export const getCurrentGoogleUser = (): DriveUser | null => (cachedAccessToken ? DRIVE_USER : null);
 export const clearCachedAccessToken = (): void => {
   cachedAccessToken = null;
 };
 export const logoutGoogleDrive = async (): Promise<void> => {
   cachedAccessToken = null;
 };
-export const initAuth = (_ok?: unknown, onFailure?: (u: null) => void) => {
-  if (!cachedAccessToken) onFailure?.(null);
+export const initAuth = (
+  onSuccess?: (user: DriveUser, token: string) => void,
+  onFailure?: (user: DriveUser | null) => void
+) => {
+  if (cachedAccessToken) onSuccess?.(DRIVE_USER, cachedAccessToken);
+  else onFailure?.(null);
   return () => {};
 };

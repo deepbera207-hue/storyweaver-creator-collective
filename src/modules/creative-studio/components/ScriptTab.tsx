@@ -17,7 +17,7 @@ import type {
   UserProfile,
 } from '../types/studio';
 import type { GenreThemeTokens } from '../theme/genreThemes';
-import { firestoreStudio } from '../services/firestoreStudio';
+import { studioService as firestoreStudio } from '../services/studioService';
 import { GoogleDriveModal } from './GoogleDriveModal';
 import { DriveSaveConfirmModal } from './DriveSaveConfirmModal';
 import {

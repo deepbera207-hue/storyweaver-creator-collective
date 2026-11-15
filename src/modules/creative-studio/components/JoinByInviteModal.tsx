@@ -6,7 +6,7 @@ import {
   type ProjectInvite,
   type UserProfile,
 } from '../types/studio';
-import { firestoreStudio } from '../services/firestoreStudio';
+import { studioService as firestoreStudio } from '../services/studioService';
 import { GoogleSignInButton } from './GoogleSignInButton';
 import { studioGoogleSignIn } from '../services/firebaseClient';
 
