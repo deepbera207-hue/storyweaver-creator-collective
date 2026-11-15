@@ -1,17 +1,17 @@
-import { Clapperboard, Music2, PenLine, Sparkles, type LucideIcon } from "lucide-react";
+import { Brush, Clapperboard, Film, Microscope, Music2, Palette, PenLine, Sparkles, type LucideIcon } from "lucide-react";
 import type { GenreKey } from "./genres";
 
-export type CategoryKey = "storyteller" | "animator" | "music" | "content";
+export type CategoryKey = "storyteller" | "animator" | "filmmaker" | "designer" | "artist" | "music" | "researcher" | "content";
 
-export const CATEGORY_KEYS: CategoryKey[] = ["storyteller", "animator", "music", "content"];
+export const CATEGORY_KEYS: CategoryKey[] = ["storyteller", "animator", "filmmaker", "designer", "artist", "music", "researcher", "content"];
 
 export const CATEGORIES: Record<
   CategoryKey,
   { label: string; plural: string; icon: LucideIcon; focus: string[]; tone: GenreKey; blurb: string }
 > = {
   storyteller: {
-    label: "Storyteller",
-    plural: "Storytellers",
+    label: "Writer / Storyteller",
+    plural: "Writers",
     icon: PenLine,
     focus: ["Scripts", "Plots", "Characters", "Fictional worlds", "Story development"],
     tone: "adventure",
@@ -24,6 +24,38 @@ export const CATEGORIES: Record<
     focus: ["Animation", "Illustration", "Motion graphics", "Visual storytelling"],
     tone: "romance",
     blurb: "Artists who give stories movement, faces and light.",
+  },
+  filmmaker: {
+    label: "Filmmaker",
+    plural: "Filmmakers",
+    icon: Film,
+    focus: ["Directing", "Cinematography", "Short films", "Screen storytelling"],
+    tone: "adventure",
+    blurb: "Directors and crews who bring scripts to the screen.",
+  },
+  designer: {
+    label: "Designer",
+    plural: "Designers",
+    icon: Palette,
+    focus: ["Character design", "Visual development", "Posters", "UI & graphics"],
+    tone: "romance",
+    blurb: "Designers who shape the look and identity of a story.",
+  },
+  artist: {
+    label: "Artist",
+    plural: "Artists",
+    icon: Brush,
+    focus: ["Illustration", "Concept art", "Comics", "Painting"],
+    tone: "peaceful",
+    blurb: "Illustrators and painters who give stories their images.",
+  },
+  researcher: {
+    label: "Researcher",
+    plural: "Researchers",
+    icon: Microscope,
+    focus: ["Historical research", "Fact-checking", "Cultural consulting", "Science advice"],
+    tone: "moral",
+    blurb: "Researchers who keep worlds grounded and authentic.",
   },
   music: {
     label: "Music Producer",
