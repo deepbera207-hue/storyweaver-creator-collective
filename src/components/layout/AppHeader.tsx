@@ -205,7 +205,7 @@ export function AppHeader() {
           <ProfileMenu />
         </div>
       </div>
-      <nav aria-label="Main" className="mx-auto hidden h-11 max-w-7xl items-center gap-1 px-4 md:flex md:px-8">
+      <nav aria-label="Main" className="mx-auto hidden h-11 max-w-7xl items-center gap-0.5 overflow-x-auto px-4 md:flex md:px-8 [scrollbar-width:none]">
         {NAV.map((item) => {
           const active = isActive(item.to);
           return (
@@ -213,7 +213,7 @@ export function AppHeader() {
               key={item.to}
               to={item.to}
               className={cn(
-                "relative rounded-full px-3.5 py-1.5 text-sm transition-colors",
+                "relative whitespace-nowrap rounded-full px-3 py-1.5 text-sm transition-colors",
                 active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
               )}
             >
