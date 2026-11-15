@@ -1,0 +1,32 @@
+{
+  "id": "/",
+  "name": "Crea-Link",
+  "short_name": "Crea-Link",
+  "description": "Crea-Link connects writers, animators, filmmakers and artists to collaborate, with an AI story assistant at their side.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fbf9f6",
+  "theme_color": "#f5f1fb",
+  "categories": ["social", "productivity", "education"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
