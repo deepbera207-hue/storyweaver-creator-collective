@@ -8,7 +8,6 @@ import {
 } from '../types/studio';
 import { studioService as firestoreStudio } from '../services/studioService';
 import { GoogleSignInButton } from './GoogleSignInButton';
-import { studioGoogleSignIn } from '../services/firebaseClient';
 
 interface JoinByInviteModalProps {
   isOpen: boolean;
@@ -102,7 +101,7 @@ export function JoinByInviteModal({
     setErrorMsg(null);
     setSigningIn(true);
     try {
-      await studioGoogleSignIn();
+      window.location.assign('/auth');
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Sign-in failed.');
     } finally {
