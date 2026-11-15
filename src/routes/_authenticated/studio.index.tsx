@@ -26,7 +26,7 @@ function StudioHome() {
       onlyMine
       heading="Collaborative Studio"
       subheading="The projects you own or belong to. Open one to chat with your team, share images and videos, edit the script and work with the AI Story Assistant."
-      onOpenProject={(projectId) => navigate({ to: "/studio/$projectId", params: { projectId } })}
+      onOpenProject={(projectId) => void navigate({ to: "/studio/$projectId", params: { projectId } })}
     />
   );
 }

@@ -40,8 +40,14 @@ export function ProfileForm({ submitLabel, onSaved }: { submitLabel: string; onS
 
   const uploadAvatar = async (file: File) => {
     if (!user) return;
-    if (!file.type.startsWith("image/")) return toast.error("Please choose an image file.");
-    if (file.size > 10 * 1024 * 1024) return toast.error("Images must be under 10 MB.");
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please choose an image file.");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Images must be under 10 MB.");
+      return;
+    }
     setUploading(true);
     try {
       const ref = await uploadToBucket("profile-media", `${user.id}/avatar_${Date.now()}_${safeFileName(file.name)}`, file, file.type);
@@ -57,9 +63,17 @@ export function ProfileForm({ submitLabel, onSaved }: { submitLabel: string; onS
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     const handle = username.trim().toLowerCase();
-    if (!/^[a-z0-9_.]{3,30}$/.test(handle)) return toast.error("Usernames use 3–30 letters, numbers, dots or underscores.");
-    if (!fullName.trim()) return toast.error("Please add your name.");
-    if (genres.length === 0) return toast.error("Pick at least one genre you love.");
+    const problem = !/^[a-z0-9_.]{3,30}$/.test(handle)
+      ? "Usernames use 3–30 letters, numbers, dots or underscores."
+      : !fullName.trim()
+        ? "Please add your name."
+        : genres.length === 0
+          ? "Pick at least one genre you love."
+          : null;
+    if (problem) {
+      toast.error(problem);
+      return;
+    }
     const patch: ProfilePatch = {
       full_name: fullName.trim().slice(0, 80),
       username: handle,

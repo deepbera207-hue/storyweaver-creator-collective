@@ -152,7 +152,7 @@ export const runStoryAssistant = createServerFn({ method: "POST" })
     return input;
   })
   .handler(async ({ data: body }) => {
-    const genre = GENRE_MOODS[body.genreId] ?? GENRE_MOODS['calm'];
+    const genre = (GENRE_MOODS[body.genreId] ?? GENRE_MOODS['calm'])!;
     const ctx = body.projectContext ? `Project Context (from the writer's Crea-Link project):\n${clip(body.projectContext, 2000)}` : null;
 
     if (body.action === "revise_suggestion") {

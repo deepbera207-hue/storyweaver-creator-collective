@@ -152,6 +152,7 @@ export function CollaborationTab({
     try {
       for (let i = 0; i < fileList.length; i += 1) {
         const file = fileList[i];
+        if (!file) continue;
         setUploadPct(0);
         setUploadingLabel(
           fileList.length > 1
@@ -220,6 +221,7 @@ export function CollaborationTab({
 
     for (let i = 0; i < selectedFiles.length; i += 1) {
       const df = selectedFiles[i];
+      if (!df) continue;
       await firestoreStudio.importMediaFromDrive(project.id, currentUser, accessToken, {
         fileId: df.id,
         fileName: df.name,

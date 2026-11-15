@@ -35,8 +35,10 @@ function ProjectStudio() {
       userId={user.id}
       initialProjectId={projectId}
       initialTab={tab}
-      onOpenProject={(id) => id !== projectId && navigate({ to: "/studio/$projectId", params: { projectId: id } })}
-      onCloseProject={() => navigate({ to: "/studio" })}
+      onOpenProject={(id) => {
+        if (id !== projectId) void navigate({ to: "/studio/$projectId", params: { projectId: id } });
+      }}
+      onCloseProject={() => void navigate({ to: "/studio" })}
     />
   );
 }

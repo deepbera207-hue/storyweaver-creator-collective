@@ -23,7 +23,7 @@ function ProjectsPage() {
   return (
     <CreativeProjectsStudio
       userId={user.id}
-      onOpenProject={(projectId) => navigate({ to: "/studio/$projectId", params: { projectId } })}
+      onOpenProject={(projectId) => void navigate({ to: "/studio/$projectId", params: { projectId } })}
     />
   );
 }

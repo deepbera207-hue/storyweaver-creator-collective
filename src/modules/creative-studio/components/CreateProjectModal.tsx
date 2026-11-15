@@ -52,7 +52,7 @@ export function CreateProjectModal({
       if (prev.includes(genre)) {
         if (prev.length === 1) return prev;
         const next = prev.filter((g) => g !== genre);
-        if (primaryGenre === genre) setPrimaryGenre(next[0]);
+        if (primaryGenre === genre && next[0]) setPrimaryGenre(next[0]);
         return next;
       }
       const next = [...prev, genre];
