@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, ClipboardCheck, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -64,21 +64,16 @@ export function ResearchPanel({ storyContext, compact = false }: { storyContext?
   const [custom, setCustom] = useState("");
   const [status, setStatus] = useState<{ tone: "ok" | "warn"; text: string } | null>(null);
 
-  const [fallback, setFallback] = useState<{ url: string; label: string; prompt: string | null } | null>(null);
-
-  function openExternal(url: string): boolean {
-    // Open synchronously inside the click so browsers don't treat it as a popup.
-    const win = window.open(url, "_blank");
-    if (win) {
-      try {
-        win.opener = null;
-      } catch {
-        /* cross-origin — ignore */
-      }
-      return true;
+  const linkRef = useRef<HTMLAnchorElement>(null);
+  const [embedded, setEmbedded] = useState(false);
+  useEffect(() => {
+    try {
+      setEmbedded(window.self !== window.top);
+    } catch {
+      setEmbedded(true);
     }
-    return false;
-  }
+  }, []);
+  const [fallback, setFallback] = useState<{ url: string; label: string; prompt: string | null } | null>(null);
 
   function copyTextSync(text: string): boolean {
     // execCommand works inside embedded previews where the async Clipboard API is blocked.
@@ -110,43 +105,33 @@ export function ResearchPanel({ storyContext, compact = false }: { storyContext?
     }
   }
 
-  function startResearch() {
-    const q = question.trim();
+  const q = question.trim();
+  const target = RESEARCH_PLATFORMS[platform];
+  const targetUrl = platform === "google" ? target.url + encodeURIComponent(q) : target.url;
+
+  // The button is a real link (opens a normal new tab, like the original page).
+  // The click only adds the clipboard copy for AI platforms.
+  function handleResearchClick(e: MouseEvent<HTMLAnchorElement>) {
     setFallback(null);
     if (!q) {
+      e.preventDefault();
       setStatus({ tone: "warn", text: "Please enter a research question." });
       return;
     }
     if (platform === "google") {
-      const url = RESEARCH_PLATFORMS.google.url + encodeURIComponent(q);
-      const opened = openExternal(url);
-      if (opened) {
-        setStatus({ tone: "ok", text: "Opened Google Search in a new tab." });
-      } else {
-        setFallback({ url, label: "Google Search", prompt: null });
-        setStatus({ tone: "warn", text: "Your browser blocked the new tab. Use the link below to open Google." });
-      }
+      setStatus({ tone: "ok", text: "Opened Google Search in a new tab." });
       return;
     }
-    const target = RESEARCH_PLATFORMS[platform];
     const prompt = buildResearchPrompt(q, outputType, custom.trim(), storyContext);
-    // Copy synchronously inside the click, then open the platform.
-    const copiedSync = copyTextSync(prompt);
-    const opened = openExternal(target.url);
-    if (copiedSync && opened) {
+    if (copyTextSync(prompt)) {
       setStatus({
         tone: "ok",
         text: `✓ Research prompt copied! Paste it into ${target.label} with Ctrl + V (or long-press → Paste on mobile).`,
       });
-      return;
+    } else {
+      setFallback({ url: target.url, label: target.label, prompt });
+      setStatus({ tone: "warn", text: `${target.label} opened, but copying was blocked. Copy the prompt below and paste it there.` });
     }
-    setFallback({ url: target.url, label: target.label, prompt: copiedSync ? null : prompt });
-    setStatus({
-      tone: "warn",
-      text: !opened
-        ? `Your browser blocked the new tab. Use the button below to open ${target.label}.`
-        : `${target.label} opened, but copying was blocked. Copy the prompt below and paste it there.`,
-    });
   }
 
   return (
@@ -189,7 +174,7 @@ export function ResearchPanel({ storyContext, compact = false }: { storyContext?
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="e.g. Psychological effects of long-term isolation"
             className="mt-2 h-12 rounded-xl bg-card"
-            onKeyDown={(e) => e.key === "Enter" && startResearch()}
+            onKeyDown={(e) => e.key === "Enter" && linkRef.current?.click()}
           />
         </div>
         <div>
@@ -234,10 +219,18 @@ export function ResearchPanel({ storyContext, compact = false }: { storyContext?
         </div>
       </div>
 
-      <Button onClick={startResearch} size="lg" className="mt-6 w-full">
-        {platform === "google" ? <Search /> : <ClipboardCheck />}
-        Research now <ArrowUpRight />
+      <Button asChild size="lg" className="mt-6 w-full">
+        <a ref={linkRef} href={targetUrl} target="_blank" rel="noopener noreferrer" onClick={handleResearchClick}>
+          {platform === "google" ? <Search /> : <ClipboardCheck />}
+          Research now <ArrowUpRight />
+        </a>
       </Button>
+      {embedded && (
+        <p className="mt-3 text-center text-xs text-muted-foreground">
+          Google, ChatGPT, Claude and Gemini don't allow themselves to be shown inside another window. If you see “refused
+          to connect”, open Crea-Link in its own browser tab and try again.
+        </p>
+      )}
       {status && (
         <p
           role="status"
