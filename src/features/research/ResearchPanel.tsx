@@ -80,7 +80,7 @@ export function ResearchPanel({ storyContext, compact = false }: { storyContext?
     return false;
   }
 
-  async function copyText(text: string): Promise<boolean> {
+  function copyTextSync(text: string): boolean {
     // execCommand works inside embedded previews where the async Clipboard API is blocked.
     try {
       const ta = document.createElement("textarea");
@@ -94,10 +94,14 @@ export function ResearchPanel({ storyContext, compact = false }: { storyContext?
       ta.setSelectionRange(0, text.length);
       const ok = document.execCommand("copy");
       document.body.removeChild(ta);
-      if (ok) return true;
+      return ok;
     } catch {
-      /* fall through */
+      return false;
     }
+  }
+
+  async function copyText(text: string): Promise<boolean> {
+    if (copyTextSync(text)) return true;
     try {
       await navigator.clipboard.writeText(text);
       return true;
@@ -126,26 +130,8 @@ export function ResearchPanel({ storyContext, compact = false }: { storyContext?
     }
     const target = RESEARCH_PLATFORMS[platform];
     const prompt = buildResearchPrompt(q, outputType, custom.trim(), storyContext);
-    // Copy first (synchronous path keeps the click's permission), then open the platform.
-    void copyText(prompt).then((copied) => {
-      // no-op: handled below
-      return copied;
-    });
-    const copiedSync = (() => {
-      try {
-        const ta = document.createElement("textarea");
-        ta.value = prompt;
-        ta.style.position = "fixed";
-        ta.style.opacity = "0";
-        document.body.appendChild(ta);
-        ta.select();
-        const ok = document.execCommand("copy");
-        document.body.removeChild(ta);
-        return ok;
-      } catch {
-        return false;
-      }
-    })();
+    // Copy synchronously inside the click, then open the platform.
+    const copiedSync = copyTextSync(prompt);
     const opened = openExternal(target.url);
     if (copiedSync && opened) {
       setStatus({
