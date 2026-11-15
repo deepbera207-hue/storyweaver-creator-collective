@@ -9,7 +9,12 @@ import {
   CheckSquare,
   BarChart3,
   Sparkles,
+  Wand2,
+  BookOpenText,
 } from 'lucide-react';
+import { StoryAssistantPage } from '@/features/story-assistant/StoryAssistantPage';
+import { ResearchPanel } from '@/features/research/ResearchPanel';
+import { storyGenreForProject } from '@/lib/genre-theme';
 import type { CreativeProject, UserProfile } from '../types/studio';
 import { getGenreTheme, getThemeCssVars, STATUS_STYLES } from '../theme/genreThemes';
 import { ProjectOverviewTab } from './ProjectOverviewTab';
@@ -27,7 +32,9 @@ export type WorkspaceTabId =
   | 'team'
   | 'progress'
   | 'contributions'
-  | 'portfolio';
+  | 'portfolio'
+  | 'assistant'
+  | 'research';
 
 interface ProjectWorkspaceProps {
   project: CreativeProject;
@@ -36,12 +43,15 @@ interface ProjectWorkspaceProps {
   onBack: () => void;
   onProjectUpdate?: (updated: CreativeProject) => void;
   onProjectDeleted: (projectId: string) => void;
+  initialTab?: WorkspaceTabId;
 }
 
 const WORKSPACE_TABS: { id: WorkspaceTabId; label: string; Icon: typeof LayoutGrid }[] = [
   { id: 'overview', label: 'Overview', Icon: LayoutGrid },
   { id: 'script', label: 'Script', Icon: FileText },
-  { id: 'collaboration', label: 'Collaboration', Icon: MessageSquare },
+  { id: 'collaboration', label: 'Group Chat', Icon: MessageSquare },
+  { id: 'assistant', label: 'AI Story Assistant', Icon: Wand2 },
+  { id: 'research', label: 'Research', Icon: BookOpenText },
   { id: 'team', label: 'Team', Icon: Users },
   { id: 'progress', label: 'Progress', Icon: CheckSquare },
   { id: 'contributions', label: 'Contributions', Icon: BarChart3 },
@@ -55,8 +65,19 @@ export function ProjectWorkspace({
   onBack,
   onProjectUpdate = () => {},
   onProjectDeleted,
+  initialTab,
 }: ProjectWorkspaceProps) {
-  const [activeTab, setActiveTab] = useState<WorkspaceTabId>('overview');
+  const [activeTab, setActiveTab] = useState<WorkspaceTabId>(initialTab ?? 'overview');
+  const isMember = project.ownerId === currentUser.id || project.members.some((m) => m.userId === currentUser.id);
+  const projectContext = [
+    `Project: ${project.title}`,
+    `Genres: ${project.genres.join(', ')} (primary: ${project.primaryGenre})`,
+    `Status: ${project.status}`,
+    project.description ? `Logline / description: ${project.description}` : '',
+    project.members.length ? `Team: ${project.members.map((m) => `${m.name} (${m.creativeRole})`).join(', ')}` : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
   const theme = getGenreTheme(project.primaryGenre);
   const cssVars = getThemeCssVars(project.primaryGenre);
   const statusStyle = STATUS_STYLES[project.status];
@@ -64,7 +85,7 @@ export function ProjectWorkspace({
   return (
     <div
       style={{ ...cssVars, background: theme.softGradient, color: theme.ink }}
-      className="min-h-[calc(100vh-73px)] transition-colors duration-500"
+      className="transition-colors duration-500"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Workspace Header & Breadcrumb */}
@@ -195,6 +216,25 @@ export function ProjectWorkspace({
                 theme={theme}
                 onProjectUpdate={onProjectUpdate}
               />
+            )}
+            {activeTab === 'assistant' &&
+              (isMember ? (
+                <StoryAssistantPage
+                  key={project.id}
+                  embedded
+                  initialTitle={project.title}
+                  initialStory={project.script?.textContent?.slice(0, 6000) ?? ''}
+                  initialGenreId={storyGenreForProject(project.primaryGenre)}
+                  projectContext={projectContext}
+                  storageKey={`crealink_story_assistant_${project.id}`}
+                />
+              ) : (
+                <div className="studio-glass rounded-2xl border p-10 text-center text-sm" style={{ borderColor: theme.borderSubtle }}>
+                  Join this project to use the AI Story Assistant with its script and context.
+                </div>
+              ))}
+            {activeTab === 'research' && (
+              <ResearchPanel compact storyContext={`${project.title} — ${project.primaryGenre}. ${project.description}`.slice(0, 400)} />
             )}
             {activeTab === 'portfolio' && (
               <PortfolioTab
