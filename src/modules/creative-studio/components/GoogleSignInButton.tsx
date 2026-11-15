@@ -1,7 +1,7 @@
 interface GoogleSignInButtonProps {
   onClick: () => void;
-  loading?: boolean;
-  label?: string;
+  loading?: boolean | undefined;
+  label?: string | undefined;
 }
 
 export function GoogleSignInButton({

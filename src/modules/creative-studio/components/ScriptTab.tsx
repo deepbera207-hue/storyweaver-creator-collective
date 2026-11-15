@@ -32,7 +32,7 @@ interface ScriptTabProps {
   project: CreativeProject;
   currentUser: UserProfile;
   theme: GenreThemeTokens;
-  onProjectUpdate?: (updated: CreativeProject) => void;
+  onProjectUpdate?: (updated: CreativeProject) => void | undefined;
 }
 
 export function ScriptTab({

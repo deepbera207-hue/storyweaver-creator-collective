@@ -20,9 +20,9 @@ export type PastProject = { title: string; year: number; role: string; summary: 
 export type Creator = {
   id: string;
   name: string;
-  username?: string | null;
-  avatarUrl?: string;
-  onboarded?: boolean;
+  username?: string | null | undefined;
+  avatarUrl?: string | undefined;
+  onboarded?: boolean | undefined;
   location: string;
   category: CategoryKey;
   genres: GenreKey[];
@@ -37,7 +37,7 @@ export type Creator = {
   lookingFor: CategoryKey[];
   portfolio: PortfolioItem[];
   projects: PastProject[];
-  featured?: boolean;
+  featured?: boolean | undefined;
 };
 
 /** Genre-matched artwork used as soft cover imagery (not sample people). */

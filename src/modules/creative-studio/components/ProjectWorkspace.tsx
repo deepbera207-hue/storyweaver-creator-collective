@@ -41,9 +41,9 @@ interface ProjectWorkspaceProps {
   currentUser: UserProfile;
   allCreators: UserProfile[];
   onBack: () => void;
-  onProjectUpdate?: (updated: CreativeProject) => void;
+  onProjectUpdate?: (updated: CreativeProject) => void | undefined;
   onProjectDeleted: (projectId: string) => void;
-  initialTab?: WorkspaceTabId;
+  initialTab?: WorkspaceTabId | undefined;
 }
 
 const WORKSPACE_TABS: { id: WorkspaceTabId; label: string; Icon: typeof LayoutGrid }[] = [

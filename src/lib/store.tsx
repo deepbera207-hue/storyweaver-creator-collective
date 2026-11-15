@@ -41,7 +41,7 @@ export type FeedProject = {
   memberIds: string[];
   updatedAt: string;
   createdAt: string;
-  coverImage?: string;
+  coverImage?: string | undefined;
 };
 
 type ProfileRow = {

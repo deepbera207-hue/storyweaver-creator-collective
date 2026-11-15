@@ -3,8 +3,8 @@ import { HardDriveUpload, X } from 'lucide-react';
 interface DriveSaveConfirmModalProps {
   isOpen: boolean;
   fileName: string;
-  description?: string;
-  busy?: boolean;
+  description?: string | undefined;
+  busy?: boolean | undefined;
   onCancel: () => void;
   onConfirm: () => void;
 }

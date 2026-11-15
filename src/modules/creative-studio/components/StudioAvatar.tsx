@@ -3,10 +3,10 @@ import { resolveStudioAsset } from '../assets/studioAssets';
 
 interface StudioAvatarProps {
   name: string;
-  avatarUrl?: string;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
-  tintBg?: string;
-  tintText?: string;
+  avatarUrl?: string | undefined;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | undefined;
+  tintBg?: string | undefined;
+  tintText?: string | undefined;
 }
 
 const SIZE_CLASSES: Record<NonNullable<StudioAvatarProps['size']>, string> = {

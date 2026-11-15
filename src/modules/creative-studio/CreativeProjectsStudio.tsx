@@ -37,19 +37,19 @@ export interface CreativeProjectsStudioProps {
   /** Signed-in Crea-Link user id (Lovable Cloud auth) */
   userId: string;
   /** Project to open in the collaborative workspace */
-  initialProjectId?: string;
+  initialProjectId?: string | undefined;
   /** Starting section of the projects dashboard */
-  initialSection?: StudioSection;
+  initialSection?: StudioSection | undefined;
   /** Show only projects the user owns or belongs to (Collaborative Studio view) */
-  onlyMine?: boolean;
+  onlyMine?: boolean | undefined;
   /** Router-aware navigation hooks */
-  onOpenProject?: (projectId: string) => void;
-  onCloseProject?: () => void;
+  onOpenProject?: (projectId: string) => void | undefined;
+  onCloseProject?: () => void | undefined;
   /** Heading shown above the dashboard */
-  heading?: string;
-  subheading?: string;
+  heading?: string | undefined;
+  subheading?: string | undefined;
   /** Workspace tab to show first when a project is opened */
-  initialTab?: WorkspaceTabId;
+  initialTab?: WorkspaceTabId | undefined;
 }
 
 export function CreativeProjectsStudio({

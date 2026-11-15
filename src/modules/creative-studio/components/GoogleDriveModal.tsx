@@ -32,12 +32,12 @@ import { GoogleSignInButton } from './GoogleSignInButton';
 interface GoogleDriveModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title?: string;
-  subtitle?: string;
-  initialFilter?: DriveFileFilter;
-  allowMultiple?: boolean;
-  confirmLabel?: string;
-  theme?: GenreThemeTokens;
+  title?: string | undefined;
+  subtitle?: string | undefined;
+  initialFilter?: DriveFileFilter | undefined;
+  allowMultiple?: boolean | undefined;
+  confirmLabel?: string | undefined;
+  theme?: GenreThemeTokens | undefined;
   onSelectFiles: (files: DriveFileItem[], accessToken: string) => Promise<void>;
 }
 

@@ -11,7 +11,7 @@ import { GoogleSignInButton } from './GoogleSignInButton';
 
 interface JoinByInviteModalProps {
   isOpen: boolean;
-  initialCode?: string;
+  initialCode?: string | undefined;
   currentUser: UserProfile | null;
   onClose: () => void;
   onJoinedProject: (projectId: string) => void;

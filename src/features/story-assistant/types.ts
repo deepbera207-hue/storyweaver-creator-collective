@@ -56,10 +56,10 @@ export interface StorySuggestion {
   category: string;
   title: string;
   guidance: string;
-  draftSnippet?: string;
+  draftSnippet?: string | undefined;
   status: SuggestionStatus;
-  edited?: boolean;
-  lastEditPrompt?: string;
+  edited?: boolean | undefined;
+  lastEditPrompt?: string | undefined;
 }
 
 export interface AssistantResponse {
@@ -97,14 +97,14 @@ export interface SavedSession {
 
 export interface StoryAssistantRequest {
   action: 'generate_suggestions';
-  projectContext?: string;
+  projectContext?: string | undefined;
   title: string;
   storyText: string;
   genreId: GenreId;
   toolId: AssistantToolId;
-  characterFocus?: string;
-  dialogueTone?: DialogueTone;
-  extraInstruction?: string;
+  characterFocus?: string | undefined;
+  dialogueTone?: DialogueTone | undefined;
+  extraInstruction?: string | undefined;
   generationRound: number;
   seenTitles: string[];
   rejectedTitles: string[];
@@ -112,7 +112,7 @@ export interface StoryAssistantRequest {
 
 export interface ReviseSuggestionRequest {
   action: 'revise_suggestion';
-  projectContext?: string;
+  projectContext?: string | undefined;
   title: string;
   storyText: string;
   genreId: GenreId;
@@ -123,7 +123,7 @@ export interface ReviseSuggestionRequest {
 
 export interface MergeStoryRequest {
   action: 'merge_story';
-  projectContext?: string;
+  projectContext?: string | undefined;
   title: string;
   storyText: string;
   genreId: GenreId;
@@ -133,21 +133,21 @@ export interface MergeStoryRequest {
 
 export interface StoryAssistantPageProps {
   /** Backend API endpoint (defaults to "/api/story-assistant"). Never pass API keys to the frontend. */
-  apiEndpoint?: string;
+  apiEndpoint?: string | undefined;
   /** Optional initial document title when embedded in an existing platform */
-  initialTitle?: string;
+  initialTitle?: string | undefined;
   /** Optional initial draft text when embedded in an existing platform */
-  initialStory?: string;
+  initialStory?: string | undefined;
   /** Optional callback when the user updates their draft or applies recreated text */
-  onDraftChange?: (title: string, content: string) => void;
+  onDraftChange?: (title: string, content: string) => void | undefined;
   /** Optional callback when a suggestion is accepted into notes */
-  onSaveSuggestion?: (suggestion: StorySuggestion) => void;
+  onSaveSuggestion?: (suggestion: StorySuggestion) => void | undefined;
   /** Optional localStorage namespace key to avoid collisions across projects */
-  storageKey?: string;
+  storageKey?: string | undefined;
   /** Initial story mood (derived from a project's primary genre) */
-  initialGenreId?: GenreId;
+  initialGenreId?: GenreId | undefined;
   /** Project context passed to the AI so suggestions stay consistent with the project */
-  projectContext?: string;
+  projectContext?: string | undefined;
   /** Render inside another page (no full-screen backdrop) */
-  embedded?: boolean;
+  embedded?: boolean | undefined;
 }

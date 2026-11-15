@@ -77,7 +77,7 @@ export interface UserProfile {
   skillCategory: string;
   experienceLevel: ExperienceLevel;
   bio: string;
-  isDemoProfile?: boolean;
+  isDemoProfile?: boolean | undefined;
 }
 
 export interface ProjectMember {
@@ -96,14 +96,14 @@ export interface ScriptData {
   id: string;
   fileName: string;
   format: 'docx' | 'pdf' | 'txt' | 'editor';
-  fileUrl?: string;
+  fileUrl?: string | undefined;
   textContent: string;
-  htmlPreview?: string;
+  htmlPreview?: string | undefined;
   accessLevel: ScriptAccessLevel;
   uploadedBy: string;
   uploadedByName: string;
   updatedAt: string;
-  fileSize?: number;
+  fileSize?: number | undefined;
 }
 
 export interface Milestone {
@@ -111,18 +111,18 @@ export interface Milestone {
   title: string;
   targetDate: string;
   status: TaskStatus;
-  description?: string;
+  description?: string | undefined;
 }
 
 export interface ProjectTask {
   id: string;
   title: string;
-  description?: string;
-  milestoneId?: string;
-  assigneeId?: string;
-  assigneeName?: string;
+  description?: string | undefined;
+  milestoneId?: string | undefined;
+  assigneeId?: string | undefined;
+  assigneeName?: string | undefined;
   status: TaskStatus;
-  dueDate?: string;
+  dueDate?: string | undefined;
   createdAt: string;
   updatedAt: string;
 }
@@ -137,21 +137,21 @@ export interface MediaAttachment {
   uploadedBy: string;
   uploadedByName: string;
   createdAt: string;
-  durationSeconds?: number;
+  durationSeconds?: number | undefined;
 }
 
 export interface ChatMessage {
   id: string;
   projectId: string;
   channel: 'chat' | 'discussion';
-  topicTitle?: string;
+  topicTitle?: string | undefined;
   senderId: string;
   senderName: string;
   senderAvatar: string;
   senderRole: string;
   content: string;
   createdAt: string;
-  attachment?: MediaAttachment;
+  attachment?: MediaAttachment | undefined;
   reactions: Record<string, string[]>;
 }
 
@@ -174,9 +174,9 @@ export interface PortfolioItem {
   description: string;
   mediaType: PortfolioMediaType;
   mediaUrl: string;
-  previewImageUrl?: string;
-  fileName?: string;
-  mimeType?: string;
+  previewImageUrl?: string | undefined;
+  fileName?: string | undefined;
+  mimeType?: string | undefined;
   contributors: string[];
   uploadedBy: string;
   uploadedByName: string;
@@ -186,20 +186,20 @@ export interface PortfolioItem {
 export interface ProjectInvite {
   id: string;
   projectId: string;
-  projectTitle?: string;
-  projectPrimaryGenre?: Genre;
-  projectStatus?: ProjectStatus;
-  ownerId?: string;
-  ownerName?: string;
+  projectTitle?: string | undefined;
+  projectPrimaryGenre?: Genre | undefined;
+  projectStatus?: ProjectStatus | undefined;
+  ownerId?: string | undefined;
+  ownerName?: string | undefined;
   code: string;
-  targetEmail?: string;
-  targetUserId?: string;
-  targetName?: string;
-  roleOffered?: CreativeRole;
-  acceptedBy?: string;
+  targetEmail?: string | undefined;
+  targetUserId?: string | undefined;
+  targetName?: string | undefined;
+  roleOffered?: CreativeRole | undefined;
+  acceptedBy?: string | undefined;
   createdBy: string;
   createdAt: string;
-  updatedAt?: string;
+  updatedAt?: string | undefined;
   status: 'pending' | 'accepted';
 }
 
@@ -207,15 +207,15 @@ export interface CreatorConnection {
   id: string;
   fromId: string;
   fromName: string;
-  fromRole?: string;
-  fromAvatar?: string;
+  fromRole?: string | undefined;
+  fromAvatar?: string | undefined;
   toId: string;
   toName: string;
-  toRole?: string;
-  toAvatar?: string;
+  toRole?: string | undefined;
+  toAvatar?: string | undefined;
   participants: [string, string];
   status: 'pending' | 'accepted' | 'declined';
-  note?: string;
+  note?: string | undefined;
   createdAt: string;
   updatedAt: string;
 }
@@ -228,15 +228,15 @@ export interface CreativeProject {
   primaryGenre: Genre;
   status: ProjectStatus;
   isDraft: boolean;
-  isSampleProject?: boolean;
+  isSampleProject?: boolean | undefined;
   ownerId: string;
-  ownerName?: string;
+  ownerName?: string | undefined;
   createdAt: string;
   updatedAt: string;
   requiredRoles: CreativeRole[];
   members: ProjectMember[];
   script: ScriptData | null;
-  scriptRestricted?: boolean;
+  scriptRestricted?: boolean | undefined;
   milestones: Milestone[];
   tasks: ProjectTask[];
   messages: ChatMessage[];

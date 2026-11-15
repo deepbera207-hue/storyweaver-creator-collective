@@ -51,7 +51,7 @@ interface CollaborationTabProps {
   project: CreativeProject;
   currentUser: UserProfile;
   theme: GenreThemeTokens;
-  onProjectUpdate?: (updated: CreativeProject) => void;
+  onProjectUpdate?: (updated: CreativeProject) => void | undefined;
 }
 
 const REACTIONS = [
